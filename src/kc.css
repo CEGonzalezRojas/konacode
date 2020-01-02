@@ -1,0 +1,274 @@
+/* Similar font */
+@import url('https://fonts.googleapis.com/css?family=Teko&display=swap');
+
+/* SNES */
+.snes{
+    display: flex;
+    position: fixed;
+    top: calc( 50% - 150px );
+    left: 0px;
+    width: 301px;
+    height: 300px;
+    background-size: contain;
+    /*background-image: url(/assets/images/snes.jpg);*/
+    font-family: 'Helvetica', sans-serif;
+    transform: translate(-301px,0px);
+    transition: transform 0.3s ease-in-out;
+}
+
+.snes.active{
+    transform: translate(0px,0px);
+}
+
+.snes > .back{
+    position: absolute;
+    top: 28px;
+    width: 240px;
+    height: 211px;
+    border-radius: 0px 73px 74px 0px;
+    background-color: #C8C8C8;
+    box-shadow: 0px 10px 10px rgba(0,0,0,.5);
+    border-bottom: 2px solid rgba(0,0,0,.6);
+}
+
+.snes > .front{
+    position: absolute;
+    top: 28px;
+    left: 54px;
+    width: 240px;
+    height: 240px;
+    border-radius: 211px;
+    background-color: #C8C8C8;
+    box-shadow: 5px 10px 10px rgba(0,0,0,.5);
+    border-bottom: 2px solid rgba(0,0,0,.6);
+    border-left: 0px solid transparent;
+    border-right: 1px solid rgba(0,0,0,.6);
+}
+
+.snes > .patch{
+    position: absolute;
+    top: 28px;
+    width: 95px;
+    height: 211px;
+    background-color: #C8C8C8;
+    color: #444444;
+    font-weight: 600;
+    font-style: italic;
+}
+
+.snes > .patch > [n]::before{
+    display: flex;
+    content: 'NTENDO';
+    position: absolute;
+    top: 15px;
+    left: -12px;
+    font-size: 32px;
+    font-family: 'Teko', sans-serif;
+}
+
+.snes > .patch > [s]::before{
+    display: flex;
+    content: 'ENT SYSTEM';
+    position: absolute;
+    top: 50px;
+    left: -6px;
+    font-size: 8px;
+    background-color: #444444;
+    color: #C8C8C8;
+    line-height: 8px;
+    padding: 4px 1px 3px 0px;
+    letter-spacing: 4px;
+    font-family: 'Teko', sans-serif;
+}
+
+.snes > .patch > [st]{
+    position: absolute;
+    bottom: 62px;
+    left: -13px;
+    width: 45px;
+    height: 18px;
+    border-radius: 40px;
+    margin-left: 5px;
+    color: #3a3a3a;
+    background-color: #3a3a3a;
+    font-weight: 600;
+    box-shadow: -4px 0px 2px rgba(0,0,0,.2);
+    border-left: 2px solid rgba(0,0,0,.2);
+    border-right: 2px solid rgba(255,255,255,.2);
+    transform: rotate(-40deg);
+    font-family: 'Helvetica', sans-serif;
+}
+
+.snes > .patch > [st]::before{
+    position: absolute;
+    content: 'START';
+    transform: rotate(40deg);
+    font-size: 10px;
+    letter-spacing: 2px;
+    top: 20px;
+    left: -20px;
+}
+
+.snes > .right{
+    position: absolute;
+    top: 23px;
+    left: 115px;
+    width: 75px;
+    height: 5px;
+    background-color: #a5a5a5;
+    border-radius: 5px 2px 0px 0px;
+}
+
+.snes > .right.d{
+    position: absolute;
+    top: 23px;
+    left: 151px;
+    width: 75px;
+    height: 59px;
+    background-color: #a5a5a5;
+    border-radius: 37px 37px 0px 0px;
+}
+
+.snes > .circle{
+    position: absolute;
+    top: 28px;
+    left: 54px;
+    width: 240px;
+    height: 240px;
+    border-radius: 211px;
+    background-color: #73787c;
+    transform: scale(.9);
+    border: 1px solid rgba(0,0,0,.1);
+}
+
+.snes > .buttons{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    position: absolute;
+    top: 99px;
+    left: 91px;
+    width: 120px;
+    height: 50px;
+    border-radius: 61px;
+    background-color: #C8C8C8;
+    transform: rotate(-40deg);
+}
+
+.snes > .buttons.down{
+    top: 149px;
+    left: 141px;
+}
+
+.snes > .buttons::before{
+    position: absolute;
+    content: 'Y';
+    display: flex;
+    transform: rotate(40deg) translate(-14px,15px);
+    color: #C8C8C8;
+    font-weight: 600;
+}
+
+.snes > .buttons.down::before{
+    content: 'B';
+}
+
+
+.snes > .buttons::after{
+    position: absolute;
+    content: 'X';
+    display: flex;
+    transform: rotate(40deg) translate(101px,-83px);
+    color: #C8C8C8;
+    font-weight: 600;
+}
+
+.snes > .buttons.down::after{
+    content: 'A';
+}
+
+.snes > .buttons > div{
+    width: 36px;
+    height: 40px;
+    border-radius: 40px;
+    margin-left: 5px;
+    box-shadow: -4px 0px 2px rgba(0,0,0,.2);
+    border-left: 2px solid rgba(0,0,0,.2);
+    border-right: 2px solid rgba(255,255,255,.2);
+    cursor: pointer;
+    -webkit-tap-highlight-color: rgba(0,0,0,0);
+    -webkit-tap-highlight-color: transparent;
+    /*transition: width 0.2s ease-in-out, box-shadow 0.2s ease-in-out,
+        border-left-width 0.2s ease-in-out, border-right-width 0.2s ease-in-out;*/
+}
+
+.snes > .buttons > div[clicked]{
+    -webkit-animation: clicked 0.4s 1;
+    animation: clicked 0.4s 1;
+}
+
+.snes > .buttons > div:nth-child(2){
+    margin-left: 0px;
+    margin-right: 5px;
+}
+
+.snes > .buttons > div[y]{
+    background-color: #0f7136;
+}
+
+.snes > .buttons > div[x]{
+    background-color: #072170;
+}
+
+.snes > .buttons > div[b]{
+    background-color: #f0ba39;
+}
+
+.snes > .buttons > div[a]{
+    background-color: #c9241e;
+}   
+
+/* Safari 4.0 - 8.0 */
+@-webkit-keyframes clicked {
+    0%{
+        width: 36px;
+        border-left: 2px solid rgba(0,0,0,.2);
+        border-right: 2px solid rgba(255,255,255,.2);
+        box-shadow: -4px 0px 2px rgba(0,0,0,.2);
+    }
+    50%{
+        width: 40px;
+        border-left-width: 0px;
+        border-right-width: 0px;
+        box-shadow: none;
+    }
+    100%{
+        width: 36px;
+        border-left: 2px solid rgba(0,0,0,.2);
+        border-right: 2px solid rgba(255,255,255,.2);
+        box-shadow: -4px 0px 2px rgba(0,0,0,.2);
+    }
+}
+
+/* Standard syntax */
+@keyframes clicked {
+    0%{
+        width: 36px;
+        border-left: 2px solid rgba(0,0,0,.2);
+        border-right: 2px solid rgba(255,255,255,.2);
+        box-shadow: -4px 0px 2px rgba(0,0,0,.2);
+    }
+    50%{
+        width: 40px;
+        border-left-width: 0px;
+        border-right-width: 0px;
+        box-shadow: none;
+    }
+    100%{
+        width: 36px;
+        border-left: 2px solid rgba(0,0,0,.2);
+        border-right: 2px solid rgba(255,255,255,.2);
+        box-shadow: -4px 0px 2px rgba(0,0,0,.2);
+    }
+}

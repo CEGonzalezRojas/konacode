@@ -1,0 +1,17 @@
+body{
+    margin: 0px;
+    background-color: #222;
+}
+
+.keys{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    font-size: 2em;
+}
+
+.keys > *:not(:last-child){
+    margin-right: 10px;
+}

@@ -1,0 +1,53 @@
+<html lang="en">
+    <head>
+        <meta name="viewport" content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0 minimal-ui"/>
+        <meta name="apple-mobile-web-app-capable" content="yes"/>
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <meta charset="utf-8">
+        <title>SNES</title>
+        
+        <link async href="css/main.css" rel="stylesheet" type="text/css">
+        
+        <script>
+            
+            window.addEventListener( 'load', _ => {
+                new KonamiCode(
+                    {
+                        callback: exec =>
+                        {
+                            if( exec ){
+
+                                document.body.append( new DOMParser().parseFromString( '<iframe id="completo" src="https://www.youtube.com/embed/wOL3XQcAgsA?autoplay=1" frameborder="0" allowfullscreen allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" style="position:fixed; top: 0; left: 0; height: 100%; width: 100%; pointer-events: none;"></iframe>', 'text/html' ).body.firstChild );
+                                
+                            }
+                            else{
+
+                                document.querySelector("#completo").remove();
+
+                            }
+
+                        }
+                    }
+                ); 
+            });
+            
+        </script>
+    </head>
+    <body>
+        
+        <div class="keys">
+            <div>⬆️</div>
+            <div>⬆️</div>
+            <div>⬇️</div>
+            <div>⬇️</div>
+            <div>⬅️</div>
+            <div>➡️</div>
+            <div>⬅️</div>
+            <div>➡️</div>
+            <div>🅱️</div>
+            <div>🅰️</div>
+        </div>
+        
+        <script type="application/javascript" src="src/kc.js"></script>
+    </body>
+</html>
