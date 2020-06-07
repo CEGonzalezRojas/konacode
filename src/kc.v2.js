@@ -142,49 +142,39 @@ class KonamiCode{
         // Obtain the current index and check if there a sequence on the way
         const currentIndex = this.currentSequence.length;
         
-        if( !this.validSequences ) this.validSequences = this.codes;
-        this.validSequences = this.validSequences.filter( code => code.sequence[ currentIndex ] == keyCode );
+        if( !this.validCodes ) this.validCodes = this.codes;
+        this.validCodes = this.validCodes.filter( code => code.sequence[ currentIndex ] == keyCode );
         
-        if( this.validSequences.length ){
-            console.log( this.validSequences );
+        if( this.validCodes.length ){
             this.currentSequence.push( keyCode );
+            
+            // Sequence finish?
+            const sequenceFinish = this.validCodes.filter( code => code.sequence.length == this.currentSequence.length );
+            
+            if( sequenceFinish.length ){
+                
+                // If only one, execute and reset
+                if( sequenceFinish.length == 1 ){
+                    //this.exex( sequenceFinish[0] );
+                    this.resetCurrentSequence();
+                }
+                else{
+                    
+                }
+                
+                this.resetCurrentSequence();
+            }
+            
         }
         else{
-            console.log( 'fail' );
-            this.currentSequence.length = 0;
-            delete this.validSequences;
+            this.resetCurrentSequence();
         }
-        
-       /* 
-        // Flag para saber si debe continuar o no
-        var continue_flag = true;
-        
-        // Obtener código
-        var key = e.keyCode;
-        
-        // Revisar si cumple con el paso actual
-        if( key !== window.ko_co.options.secuence[ window.ko_co.step ] ) continue_flag = false;
-        
-        // Revisar si debe continuar o no
-        if( !continue_flag ){
-            
-            // Resetear valores
-            window.ko_co.reset();
-
-            return;
-        }
-        
-        // Ver si es necesario mostrar el teclado o no
-        window.ko_co.request_keyboard( window.ko_co.step + 1 );
-        
-        // El step aumenta y se comprueba si es ya se supero el último paso
-        if( ++(window.ko_co.step) >= window.ko_co.options.secuence.length ){
-            
-            // Se ejecuta el código
-            window.ko_co.do();
-            
-        }
-        */
+    }
+    
+    // Clean the sequence
+    resetCurrentSequence(){
+        this.currentSequence.length = 0;
+        delete this.validCodes;   
     }
     
     // Transcript e.code or e.keyCode to a valid member of a KC sequence
