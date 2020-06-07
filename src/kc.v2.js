@@ -59,10 +59,13 @@ class KonamiCode{
                 delete code.color;
             }
             
-            // Save the sequence if not exist yet
-            if( !this.codes.find( c => c.sequence.join() == code.sequence.join()) ){
-                this.codes.push( code );
+            // Remove previous code if exists
+            if( this.codes.find( c => c.sequence.join() == code.sequence.join()) ){
+                this.codes.splice( this.codes.findIndex( c => c.sequence.join() == code.sequence.join()), 1 );
             }
+            
+            // Save the sequence
+            this.codes.push( code );
             
         }
         

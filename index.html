@@ -34,17 +34,7 @@
                                 sequence: [ KonamiCode.keys.UP, KonamiCode.keys.DOWN, KonamiCode.keys.DOWN, KonamiCode.keys.X ],
                                 skin: KonamiCode.skins.SWITCH,
                                 callback: exec =>{
-                                    if( exec ){
-
-                                        document.body.append( new DOMParser().parseFromString( '<iframe id="completo" src="https://www.youtube.com/embed/wOL3XQcAgsA?autoplay=1" frameborder="0" allowfullscreen allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" style="position:fixed; top: 0; left: 0; height: 100%; width: 100%; pointer-events: none;"></iframe>', 'text/html' ).body.firstChild );
-
-                                    }
-                                    else{
-
-                                        document.querySelector("#completo").remove();
-
-                                    }
-
+                                
                                 }
                             }
                         ]
