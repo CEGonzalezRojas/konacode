@@ -10,7 +10,20 @@ JS Implementation of the classic code. Features:
 */
 class KonamiCode{
     
-    constructor(){
+    /* Setup is an object with like:
+    {
+        codes: [    // Array of Objects
+            {
+                sequence: [ KonamiCode.keys.UP, KonamiCode.keys.UP, ... ],    // Array with sequence. Allowed 'keys' values are in KonamiCode.keys
+                then: _ => { ... }  // Function to be called when the sequence is complete,
+                skin: KonamiCode.skins.SKIN // Skin for the joystick.
+                color: KonamiCode.colors.COLOR  // Some skins have color variations
+            },
+            –
+        ]
+    }
+    */
+    constructor( setup ){
         
         // Only one instance per machine
         if( KonamiCode._T_T ) throw new Error( 'Only one instance of KC allowed' );
@@ -19,8 +32,6 @@ class KonamiCode{
         KonamiCode._T_T = this;
         
         this.domParser = new DOMParser();
-        
-        // Stylizing
         this.appendStyles();
         
     }
@@ -29,7 +40,7 @@ class KonamiCode{
     appendStyles(){
         
         // Load valid skins
-        for( const skin of KonamiCode.skins() ){
+        for( const skin of Object.values( KonamiCode.skins ) ){
             
             const link = document.createElement( "LINK" );
             link.href = `${KonamiCode.source}skins/${skin}.css`;
@@ -45,10 +56,43 @@ class KonamiCode{
     /*========================
         Class Methods
     ========================*/
-    // Get valid skins
-    static skins(){
-        return [ "snes", "switch" ];
+    
+    // Get the basic setup
+    static basicSetup(){
+        return {
+            codes: []  
+        };
     }
 }
+
+// Keys for codes
+KonamiCode.keys = {
+    UP: "UP",
+    DOWN: "DOWN",
+    LEFT: "LEFT",
+    RIGHT: "RIGHT",
+    B: "B",
+    A: "A",
+    X: "X",
+    Y: "Y",
+};
+
+// Skins
+KonamiCode.skins = {
+    SNES: "snes",
+    SWITCH: "switch"
+};
+
+// Skins
+KonamiCode.colors = {
+    RED: "red",
+    BLUE: "blue",
+    YELLOW: "yellow",
+    GREEN: "green",
+    PINK: "pink",
+    PURPLE: "purple",
+    GRAY: "gray"
+};
+
 // Save current script URL
 KonamiCode.source = `${document.currentScript.src.split("/").slice(0,-1).join("/")}/`;

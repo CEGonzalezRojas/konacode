@@ -1,11 +1,16 @@
 :root{
     --switch-black: #1a1a17;
-    --switch-red: #fc424c;
-    --switch-gray: #8a8a8a;
+    --switch-red: #ff3c28;
+    --switch-blue: #27e0fc;
+    --switch-yellow: #e6ff00;
+    --switch-green: #1edc00;
+    --switch-pink: #ff3278;
+    --switch-purple: #b400e6;
+    --switch-gray: #828282;
 }
 
 /* Switch */
-kcjoystick[skin-switch]{
+kcjoystick[data-skin|=switch]{
     display: flex;
     position: fixed;
     top: calc( 50% - 200px );
@@ -17,11 +22,11 @@ kcjoystick[skin-switch]{
     transition: transform 0.3s ease-in-out;
 }
 
-kcjoystick[skin-switch].active{
+kcjoystick[data-skin|=switch].active{
     transform: translate(0px,0px);
 }
 
-kcjoystick[skin-switch] > .right{
+kcjoystick[data-skin|=switch] > .right{
     position: absolute;
     top: 0px;
     left: 22px;
@@ -31,7 +36,7 @@ kcjoystick[skin-switch] > .right{
     border-radius: 5px 2px 0px 0px;
 }
 
-kcjoystick[skin-switch] > .right.d{
+kcjoystick[data-skin|=switch] > .right.d{
     position: absolute;
     top: 0px;
     left: 15px;
@@ -41,7 +46,7 @@ kcjoystick[skin-switch] > .right.d{
     border-radius: 10px 68px 0px 0px;
 }
 
-kcjoystick[skin-switch] > .front{
+kcjoystick[data-skin|=switch] > .front{
     width: 100%;
     position: absolute;
     bottom: 0;
@@ -54,7 +59,7 @@ kcjoystick[skin-switch] > .front{
     box-sizing: border-box;
 }
 
-kcjoystick[skin-switch] > .buttons{
+kcjoystick[data-skin|=switch] > .buttons{
     position: absolute;
     width: 97px;
     height: 273px;
@@ -62,7 +67,7 @@ kcjoystick[skin-switch] > .buttons{
     left: 10px;
 }
 
-kcjoystick[skin-switch] > .buttons > [p]{
+kcjoystick[data-skin|=switch] > .buttons > [p]{
     position: absolute;
     top: 0px;
     left: 0px;
@@ -70,7 +75,7 @@ kcjoystick[skin-switch] > .buttons > [p]{
     height: 22px;
 }
 
-kcjoystick[skin-switch] > .buttons > [p]::before, kcjoystick[skin-switch] > .buttons > [p]::after{
+kcjoystick[data-skin|=switch] > .buttons > [p]::before, kcjoystick[data-skin|=switch] > .buttons > [p]::after{
     position: absolute;
     top: 7px;
     content: '';
@@ -81,19 +86,19 @@ kcjoystick[skin-switch] > .buttons > [p]::before, kcjoystick[skin-switch] > .but
     border-radius: 2px;
 }
 
-kcjoystick[skin-switch] > .buttons > [p]::before{
+kcjoystick[data-skin|=switch] > .buttons > [p]::before{
     border-top: 1px solid rgba(255,255,255,0.1);
     box-sizing: border-box;
     box-shadow: 0px 1px 4px rgba(0,0,0,.5);
 }
 
-kcjoystick[skin-switch] > .buttons > [p]::after{
+kcjoystick[data-skin|=switch] > .buttons > [p]::after{
     transform: rotate(90deg);
     border-left: 1px solid rgba(255,255,255,0.1);
     box-sizing: border-box;
 }
 
-kcjoystick[skin-switch] > .buttons > [x], kcjoystick[skin-switch] > .buttons > [y], kcjoystick[skin-switch] > .buttons > [a], kcjoystick[skin-switch] > .buttons > [b]{
+kcjoystick[data-skin|=switch] > .buttons > [x], kcjoystick[data-skin|=switch] > .buttons > [y], kcjoystick[data-skin|=switch] > .buttons > [a], kcjoystick[data-skin|=switch] > .buttons > [b]{
     display: flex;
     justify-content: center;
     align-items: center;
@@ -107,7 +112,7 @@ kcjoystick[skin-switch] > .buttons > [x], kcjoystick[skin-switch] > .buttons > [
     font-size: 0.8em;
 }
 
-kcjoystick[skin-switch] > .buttons > [x]::before, kcjoystick[skin-switch] > .buttons > [y]::before, kcjoystick[skin-switch] > .buttons > [a]::before, kcjoystick[skin-switch] > .buttons > [b]::before{
+kcjoystick[data-skin|=switch] > .buttons > [x]::before, kcjoystick[data-skin|=switch] > .buttons > [y]::before, kcjoystick[data-skin|=switch] > .buttons > [a]::before, kcjoystick[data-skin|=switch] > .buttons > [b]::before{
     content: '';
     position: absolute;
     top: 0px;
@@ -117,43 +122,43 @@ kcjoystick[skin-switch] > .buttons > [x]::before, kcjoystick[skin-switch] > .but
     border-radius: 100%;
 }
 
-kcjoystick[skin-switch] > .buttons > [x]{
+kcjoystick[data-skin|=switch] > .buttons > [x]{
     top: 29px;
     left: 37px;
 }
 
-kcjoystick[skin-switch] > .buttons > [x]:after{
+kcjoystick[data-skin|=switch] > .buttons > [x]:after{
     content: 'X';
 }
 
-kcjoystick[skin-switch] > .buttons > [y]{
+kcjoystick[data-skin|=switch] > .buttons > [y]{
     top: 59px;
     left: 6px;
 }
 
-kcjoystick[skin-switch] > .buttons > [y]:after{
+kcjoystick[data-skin|=switch] > .buttons > [y]:after{
     content: 'Y';
 }
 
-kcjoystick[skin-switch] > .buttons > [a]{
+kcjoystick[data-skin|=switch] > .buttons > [a]{
     top: 59px;
     right: 2px;
 }
 
-kcjoystick[skin-switch] > .buttons > [a]:after{
+kcjoystick[data-skin|=switch] > .buttons > [a]:after{
     content: 'A';
 }
 
-kcjoystick[skin-switch] > .buttons > [b]{
+kcjoystick[data-skin|=switch] > .buttons > [b]{
     top: 88px;
     left: 37px;
 }
 
-kcjoystick[skin-switch] > .buttons > [b]:after{
+kcjoystick[data-skin|=switch] > .buttons > [b]:after{
     content: 'B';
 }
 
-kcjoystick[skin-switch] > .buttons > [t]{
+kcjoystick[data-skin|=switch] > .buttons > [t]{
     display: flex;
     justify-content: center;
     align-items: center;
@@ -167,7 +172,7 @@ kcjoystick[skin-switch] > .buttons > [t]{
     box-shadow: 0px 0px 10px rgba(0,0,0,.6);
 }
 
-kcjoystick[skin-switch] > .buttons > [t]::before{
+kcjoystick[data-skin|=switch] > .buttons > [t]::before{
     content: '';
     width: 100%;
     height: 100%;
@@ -180,7 +185,7 @@ kcjoystick[skin-switch] > .buttons > [t]::before{
     box-sizing: border-box;
 }
 
-kcjoystick[skin-switch] > .buttons > [t]::after{
+kcjoystick[data-skin|=switch] > .buttons > [t]::after{
     content: '';
     width: 80%;
     height: 80%;
@@ -190,7 +195,7 @@ kcjoystick[skin-switch] > .buttons > [t]::after{
     background: var(--switch-black);
 }
 
-kcjoystick[skin-switch] > .buttons > [h]{
+kcjoystick[data-skin|=switch] > .buttons > [h]{
     display: flex;
     justify-content: center;
     align-items: center;
@@ -204,7 +209,7 @@ kcjoystick[skin-switch] > .buttons > [h]{
     box-shadow: 0px 1px 5px rgba(0,0,0,.5);
 }
 
-kcjoystick[skin-switch] > .buttons > [h]::before{
+kcjoystick[data-skin|=switch] > .buttons > [h]::before{
     content: '';
     width: 100%;
     height: 100%;
@@ -217,7 +222,7 @@ kcjoystick[skin-switch] > .buttons > [h]::before{
     box-sizing: border-box;
 }
 
-kcjoystick[skin-switch] > .buttons > [h]::after{
+kcjoystick[data-skin|=switch] > .buttons > [h]::after{
     content: '';
     width: 80%;
     height: 80%;
@@ -226,3 +231,11 @@ kcjoystick[skin-switch] > .buttons > [h]::after{
     position: relative;
     background: var(--switch-black);
 }
+
+/* Front variatons */
+kcjoystick[data-skin=switch-blue] > .front{ background-color: var(--switch-blue); }
+kcjoystick[data-skin=switch-yellow] > .front{ background-color: var(--switch-yellow); }
+kcjoystick[data-skin=switch-green] > .front{ background-color: var(--switch-green); }
+kcjoystick[data-skin=switch-pink] > .front{ background-color: var(--switch-pink); }
+kcjoystick[data-skin=switch-purple] > .front{ background-color: var(--switch-purple); }
+kcjoystick[data-skin=switch-gray] > .front{ background-color: var(--switch-gray); }

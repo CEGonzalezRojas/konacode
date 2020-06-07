@@ -14,7 +14,7 @@
 }
 
 /* Snes */
-kcjoystick[skin-snes]{
+kcjoystick[data-skin|=snes]{
     display: flex;
     position: fixed;
     top: calc( 50% - 150px );
@@ -26,11 +26,11 @@ kcjoystick[skin-snes]{
     transition: transform 0.3s ease-in-out;
 }
 
-kcjoystick[skin-snes].active{
+kcjoystick[data-skin|=snes].active{
     transform: translate(0px,0px);
 }
 
-kcjoystick[skin-snes] > .back{
+kcjoystick[data-skin|=snes] > .back{
     position: absolute;
     top: 28px;
     width: 240px;
@@ -41,7 +41,7 @@ kcjoystick[skin-snes] > .back{
     border-bottom: 2px solid rgba(0,0,0,.6);
 }
 
-kcjoystick[skin-snes] > .front{
+kcjoystick[data-skin|=snes] > .front{
     position: absolute;
     top: 28px;
     left: 54px;
@@ -55,7 +55,7 @@ kcjoystick[skin-snes] > .front{
     border-right: 1px solid rgba(0,0,0,.6);
 }
 
-kcjoystick[skin-snes] > .patch{
+kcjoystick[data-skin|=snes] > .patch{
     position: absolute;
     top: 28px;
     width: 95px;
@@ -66,7 +66,7 @@ kcjoystick[skin-snes] > .patch{
     font-style: italic;
 }
 
-kcjoystick[skin-snes] > .patch > [n]::before{
+kcjoystick[data-skin|=snes] > .patch > [n]::before{
     display: flex;
     content: 'NTENDO';
     position: absolute;
@@ -76,7 +76,7 @@ kcjoystick[skin-snes] > .patch > [n]::before{
     font-family: 'Teko', sans-serif;
 }
 
-kcjoystick[skin-snes] > .patch > [s]::before{
+kcjoystick[data-skin|=snes] > .patch > [s]::before{
     display: flex;
     content: 'ENT SYSTEM';
     position: absolute;
@@ -91,7 +91,7 @@ kcjoystick[skin-snes] > .patch > [s]::before{
     font-family: 'Teko', sans-serif;
 }
 
-kcjoystick[skin-snes] > .patch > [st]{
+kcjoystick[data-skin|=snes] > .patch > [st]{
     position: absolute;
     bottom: 62px;
     left: -13px;
@@ -109,7 +109,7 @@ kcjoystick[skin-snes] > .patch > [st]{
     font-family: 'Helvetica', sans-serif;
 }
 
-kcjoystick[skin-snes] > .patch > [st]::before{
+kcjoystick[data-skin|=snes] > .patch > [st]::before{
     position: absolute;
     content: 'START';
     transform: rotate(40deg);
@@ -119,7 +119,7 @@ kcjoystick[skin-snes] > .patch > [st]::before{
     left: -20px;
 }
 
-kcjoystick[skin-snes] > .right{
+kcjoystick[data-skin|=snes] > .right{
     position: absolute;
     top: 23px;
     left: 115px;
@@ -129,7 +129,7 @@ kcjoystick[skin-snes] > .right{
     border-radius: 5px 2px 0px 0px;
 }
 
-kcjoystick[skin-snes] > .right.d{
+kcjoystick[data-skin|=snes] > .right.d{
     position: absolute;
     top: 23px;
     left: 151px;
@@ -139,7 +139,7 @@ kcjoystick[skin-snes] > .right.d{
     border-radius: 37px 37px 0px 0px;
 }
 
-kcjoystick[skin-snes] > .circle{
+kcjoystick[data-skin|=snes] > .circle{
     position: absolute;
     top: 28px;
     left: 54px;
@@ -151,7 +151,7 @@ kcjoystick[skin-snes] > .circle{
     border: 1px solid rgba(0,0,0,.1);
 }
 
-kcjoystick[skin-snes] > .buttons{
+kcjoystick[data-skin|=snes] > .buttons{
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -166,12 +166,12 @@ kcjoystick[skin-snes] > .buttons{
     transform: rotate(-40deg);
 }
 
-kcjoystick[skin-snes] > .buttons.down{
+kcjoystick[data-skin|=snes] > .buttons.down{
     top: 149px;
     left: 141px;
 }
 
-kcjoystick[skin-snes] > .buttons::before{
+kcjoystick[data-skin|=snes] > .buttons::before{
     position: absolute;
     content: 'Y';
     display: flex;
@@ -180,12 +180,12 @@ kcjoystick[skin-snes] > .buttons::before{
     font-weight: 600;
 }
 
-kcjoystick[skin-snes] > .buttons.down::before{
+kcjoystick[data-skin|=snes] > .buttons.down::before{
     content: 'B';
 }
 
 
-kcjoystick[skin-snes] > .buttons::after{
+kcjoystick[data-skin|=snes] > .buttons::after{
     position: absolute;
     content: 'X';
     display: flex;
@@ -194,11 +194,11 @@ kcjoystick[skin-snes] > .buttons::after{
     font-weight: 600;
 }
 
-kcjoystick[skin-snes] > .buttons.down::after{
+kcjoystick[data-skin|=snes] > .buttons.down::after{
     content: 'A';
 }
 
-kcjoystick[skin-snes] > .buttons > div{
+kcjoystick[data-skin|=snes] > .buttons > div{
     width: 36px;
     height: 40px;
     border-radius: 40px;
@@ -211,29 +211,29 @@ kcjoystick[skin-snes] > .buttons > div{
     -webkit-tap-highlight-color: transparent;
 }
 
-kcjoystick[skin-snes] > .buttons > div[clicked]{
+kcjoystick[data-skin|=snes] > .buttons > div[clicked]{
     -webkit-animation: clicked 0.4s 1;
     animation: clicked 0.4s 1;
 }
 
-kcjoystick[skin-snes] > .buttons > div:nth-child(2){
+kcjoystick[data-skin|=snes] > .buttons > div:nth-child(2){
     margin-left: 0px;
     margin-right: 5px;
 }
 
-kcjoystick[skin-snes] > .buttons > div[y]{
+kcjoystick[data-skin|=snes] > .buttons > div[y]{
     background-color: var(--button-y);
 }
 
-kcjoystick[skin-snes] > .buttons > div[x]{
+kcjoystick[data-skin|=snes] > .buttons > div[x]{
     background-color: var(--button-x);
 }
 
-kcjoystick[skin-snes] > .buttons > div[b]{
+kcjoystick[data-skin|=snes] > .buttons > div[b]{
     background-color: var(--button-b);
 }
 
-kcjoystick[skin-snes] > .buttons > div[a]{
+kcjoystick[data-skin|=snes] > .buttons > div[a]{
     background-color: var(--button-a);
 }   
 
