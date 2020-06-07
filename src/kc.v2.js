@@ -32,6 +32,7 @@ class KonamiCode{
         if( setup && ( !setup.codes || !Array.isArray( setup.codes ) ) ) throw new Error( 'You have to define at least 1 code' );
         
         const basicSetup = KonamiCode.basicSetup();
+        this.codes = [];
         
         for( const code of setup.codes ){
             
@@ -39,7 +40,7 @@ class KonamiCode{
             if( code.sequence ){
                 
                 const keysValues = Object.values( KonamiCode.keys );
-                if( code.sequence.join('') != code.sequence.filter( key => keysValues.indexOf( key ) != -1 ).join('') ){
+                if( code.sequence.join() != code.sequence.filter( key => keysValues.indexOf( key ) != -1 ).join() ){
                     continue;
                 }
                 
@@ -47,7 +48,6 @@ class KonamiCode{
             else{
                 code.sequence = basicSetup.sequence;
             }
-            console.log( code.sequence );
             
             // Check skin
             if( code.skin && ( typeof code.skin != "string" || Object.values( KonamiCode.skins ).indexOf( code.skin ) == -1 ) ){
@@ -59,7 +59,14 @@ class KonamiCode{
                 delete code.color;
             }
             
+            // Save the sequence if not exist yet
+            if( !this.codes.find( c => c.sequence.join() == code.sequence.join()) ){
+                this.codes.push( code );
+            }
+            
         }
+        
+        console.log( this.codes );
     
         // Saving reference
         KonamiCode._T_T = this;
