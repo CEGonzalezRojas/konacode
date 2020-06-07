@@ -1,0 +1,228 @@
+:root{
+    --switch-black: #1a1a17;
+    --switch-red: #fc424c;
+    --switch-gray: #8a8a8a;
+}
+
+/* Switch */
+kcjoystick[skin-switch]{
+    display: flex;
+    position: fixed;
+    top: calc( 50% - 200px );
+    left: 0px;
+    width: 130px;
+    height: 400px;
+    font-family: 'Helvetica', sans-serif;
+    transform: translate(-130px,0px);
+    transition: transform 0.3s ease-in-out;
+}
+
+kcjoystick[skin-switch].active{
+    transform: translate(0px,0px);
+}
+
+kcjoystick[skin-switch] > .right{
+    position: absolute;
+    top: 0px;
+    left: 22px;
+    width: 32px;
+    height: 5px;
+    background-color: var(--switch-black);
+    border-radius: 5px 2px 0px 0px;
+}
+
+kcjoystick[skin-switch] > .right.d{
+    position: absolute;
+    top: 0px;
+    left: 15px;
+    width: 111px;
+    height: 89px;
+    background-color: var(--switch-black);
+    border-radius: 10px 68px 0px 0px;
+}
+
+kcjoystick[skin-switch] > .front{
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+    height: 392px;
+    border-radius: 0px 82px 82px 0px;
+    background-color: var(--switch-red);
+    border-bottom: 3px solid rgba(0,0,0,.2);
+    border-top: 3px solid rgba(255,255,255,.2);
+    box-shadow: 5px 10px 10px rgba(0,0,0,.5);
+    box-sizing: border-box;
+}
+
+kcjoystick[skin-switch] > .buttons{
+    position: absolute;
+    width: 97px;
+    height: 273px;
+    top: 32px;
+    left: 10px;
+}
+
+kcjoystick[skin-switch] > .buttons > [p]{
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 22px;
+    height: 22px;
+}
+
+kcjoystick[skin-switch] > .buttons > [p]::before, kcjoystick[skin-switch] > .buttons > [p]::after{
+    position: absolute;
+    top: 7px;
+    content: '';
+    display: block;
+    background-color: var(--switch-black);
+    height: 8px;
+    width: 100%;
+    border-radius: 2px;
+}
+
+kcjoystick[skin-switch] > .buttons > [p]::before{
+    border-top: 1px solid rgba(255,255,255,0.1);
+    box-sizing: border-box;
+    box-shadow: 0px 1px 4px rgba(0,0,0,.5);
+}
+
+kcjoystick[skin-switch] > .buttons > [p]::after{
+    transform: rotate(90deg);
+    border-left: 1px solid rgba(255,255,255,0.1);
+    box-sizing: border-box;
+}
+
+kcjoystick[skin-switch] > .buttons > [x], kcjoystick[skin-switch] > .buttons > [y], kcjoystick[skin-switch] > .buttons > [a], kcjoystick[skin-switch] > .buttons > [b]{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    width: 27px;
+    height: 27px;
+    border-radius: 27px;
+    background: var(--switch-black);
+    color: var(--switch-gray);
+    box-shadow: 0px 2px 5px rgba(0,0,0,.5);
+    font-size: 0.8em;
+}
+
+kcjoystick[skin-switch] > .buttons > [x]::before, kcjoystick[skin-switch] > .buttons > [y]::before, kcjoystick[skin-switch] > .buttons > [a]::before, kcjoystick[skin-switch] > .buttons > [b]::before{
+    content: '';
+    position: absolute;
+    top: 0px;
+    height: 100%;
+    width: 100%;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    border-radius: 100%;
+}
+
+kcjoystick[skin-switch] > .buttons > [x]{
+    top: 29px;
+    left: 37px;
+}
+
+kcjoystick[skin-switch] > .buttons > [x]:after{
+    content: 'X';
+}
+
+kcjoystick[skin-switch] > .buttons > [y]{
+    top: 59px;
+    left: 6px;
+}
+
+kcjoystick[skin-switch] > .buttons > [y]:after{
+    content: 'Y';
+}
+
+kcjoystick[skin-switch] > .buttons > [a]{
+    top: 59px;
+    right: 2px;
+}
+
+kcjoystick[skin-switch] > .buttons > [a]:after{
+    content: 'A';
+}
+
+kcjoystick[skin-switch] > .buttons > [b]{
+    top: 88px;
+    left: 37px;
+}
+
+kcjoystick[skin-switch] > .buttons > [b]:after{
+    content: 'B';
+}
+
+kcjoystick[skin-switch] > .buttons > [t]{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    bottom: 61px;
+    left: 21px;
+    height: 60px;
+    width: 60px;
+    border-radius: 60px;
+    background: var(--switch-black);
+    box-shadow: 0px 0px 10px rgba(0,0,0,.6);
+}
+
+kcjoystick[skin-switch] > .buttons > [t]::before{
+    content: '';
+    width: 100%;
+    height: 100%;
+    border-radius: 100%;
+    position: absolute;
+    background: rgba(255,255,255,0.05);
+    border-top: 2px solid rgba(255,255,255,0.1);
+    border-top: 1px solid rgba(255,255,255,0.1);
+    border-top: 1px solid rgba(255,255,255,0.1);
+    box-sizing: border-box;
+}
+
+kcjoystick[skin-switch] > .buttons > [t]::after{
+    content: '';
+    width: 80%;
+    height: 80%;
+    border-radius: 80%;
+    display: block;
+    position: relative;
+    background: var(--switch-black);
+}
+
+kcjoystick[skin-switch] > .buttons > [h]{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    bottom: 0px;
+    left: 13px;
+    height: 33px;
+    width: 33px;
+    border-radius: 33px;
+    background: var(--switch-black);
+    box-shadow: 0px 1px 5px rgba(0,0,0,.5);
+}
+
+kcjoystick[skin-switch] > .buttons > [h]::before{
+    content: '';
+    width: 100%;
+    height: 100%;
+    border-radius: 100%;
+    position: absolute;
+    background: rgba(255,255,255,0.2);
+    border-top: 2px solid rgba(255,255,255,0.1);
+    border-top: 1px solid rgba(255,255,255,0.1);
+    border-top: 1px solid rgba(255,255,255,0.1);
+    box-sizing: border-box;
+}
+
+kcjoystick[skin-switch] > .buttons > [h]::after{
+    content: '';
+    width: 80%;
+    height: 80%;
+    border-radius: 80%;
+    display: block;
+    position: relative;
+    background: var(--switch-black);
+}

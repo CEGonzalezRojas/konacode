@@ -401,7 +401,7 @@ class KonamiCode{
         var link = document.createElement( "LINK" );
         
         // Agregar la ruta correcta
-        link.href = `${KonamiCode.source_url}kc.css`;
+        link.href = `${KonamiCode.source_url}kc.min.css`;
         
         // Incluir attributos necesarios
         link.type = "text/css";
