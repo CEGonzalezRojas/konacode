@@ -57,6 +57,7 @@ kcjoystick[data-skin|=switch] > .front{
     border-top: 3px solid rgba(255,255,255,.2);
     box-shadow: 5px 10px 10px rgba(0,0,0,.5);
     box-sizing: border-box;
+    transition: background-color 0.2s ease-in-out;
 }
 
 kcjoystick[data-skin|=switch] > .buttons{
@@ -239,3 +240,55 @@ kcjoystick[data-skin=switch-green] > .front{ background-color: var(--switch-gree
 kcjoystick[data-skin=switch-pink] > .front{ background-color: var(--switch-pink); }
 kcjoystick[data-skin=switch-purple] > .front{ background-color: var(--switch-purple); }
 kcjoystick[data-skin=switch-gray] > .front{ background-color: var(--switch-gray); }
+kcjoystick[data-skin=switch-rainbow] > .front{
+    animation: switch-anim-rainbow 1.2s infinite;
+}
+
+/* Animations */
+@-webkit-keyframes switch-anim-rainbow{
+    0%{
+        background-color: var(--switch-red);
+    }
+    16%{
+        background-color: var(--switch-blue);
+    }
+    32%{
+        background-color: var(--switch-yellow);
+    }
+    48%{
+        background-color: var(--switch-green);
+    }
+    64%{
+        background-color: var(--switch-pink);
+    }
+    80%{
+        background-color: var(--switch-purple);
+    }
+    100%{
+        background-color: var(--switch-red);
+    }
+}
+
+@keyframes switch-anim-rainbow {
+    0%{
+        background-color: var(--switch-red);
+    }
+    16%{
+        background-color: var(--switch-blue);
+    }
+    32%{
+        background-color: var(--switch-yellow);
+    }
+    48%{
+        background-color: var(--switch-green);
+    }
+    64%{
+        background-color: var(--switch-pink);
+    }
+    80%{
+        background-color: var(--switch-purple);
+    }
+    100%{
+        background-color: var(--switch-red);
+    }
+}
