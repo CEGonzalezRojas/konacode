@@ -27,7 +27,7 @@ class KonamiCode{
     constructor( setup ){
         
         // Only one instance per machine
-        if( KonamiCode._T_T ) throw new Error( 'Only one instance of KC allowed' );
+        if( KonamiCode.n_n ) throw new Error( 'Only one instance of KC allowed' );
         
         this.register( setup.codes );
         
@@ -35,7 +35,7 @@ class KonamiCode{
         if( !this.codes.length ) throw new Error( 'You have to define at least 1 valid code' );
     
         // Saving reference
-        KonamiCode._T_T = this;
+        KonamiCode.n_n = this;
         this.currentSequence = [];
         
         this.domParser = new DOMParser();
@@ -46,6 +46,9 @@ class KonamiCode{
             setup.event = 'keyup';
         }
         this.keyboardEvent = 'keyup';
+        
+        // For mobile support
+        this.touchXStart = this.touchXEnd = this.touchYStart = this.touchYEnd = null;
         
         this.events();
     }
@@ -127,15 +130,32 @@ class KonamiCode{
     // Set handler for both desktop & mobile
     events(){
         
-        // Keyboard
-        window.addEventListener( this.keyboardEvent , e => { this.handler(e); } );
+        if( KonamiCode.isMobile() ){
+            
+            if( "ontouchstart" in window ){
+                // Touch events
+                window.addEventListener( "touchstart", e => { this.touchStart(e); })
+                window.addEventListener( "touchend", e => { this.touchEnd(e); })
+                window.addEventListener( "touchcancel", e => { this.touchCancel(e); })
+            } 
+            else{
+                // Mouse events
+                window.addEventListener( "mousedown", e => { this.touchStart(e); })
+                window.addEventListener( "mouseup", e => { this.touchEnd(e); })
+            }
+            
+        }
+        else{
+            // Keyboard
+            window.addEventListener( this.keyboardEvent , e => { this.handler(e); } );
+        }
         
     }
     
     // Handler event for keys
     handler( e ){
         
-        if( !KonamiCode._T_T || ( !e.code && !e.keyCode ) ) return;
+        if( !KonamiCode.n_n || ( !e.code && !e.keyCode ) ) return;
         
         const keyCode = this.transcript( e.code || e.keyCode );
         
@@ -147,6 +167,7 @@ class KonamiCode{
         
         if( this.validCodes.length ){
             this.currentSequence.push( keyCode );
+            console.log( this.currentSequence );
             
             // Sequence finish?
             const sequenceFinish = this.validCodes.filter( code => code.sequence.length == this.currentSequence.length );
@@ -219,6 +240,65 @@ class KonamiCode{
         
     }
     
+    // Touch/Mouse events
+    
+    // Save initial position
+    touchStart( e ){
+        
+        if( "ontouchstart" in window ){
+            // Touchstart: We only take care of the fisrt touch
+            this.touchXStart = e.touches[0].clientX;
+            this.touchYStart = e.touches[0].clientY;
+        }
+        else{
+            // Mousedown
+            this.touchXStart = e.clientX;
+            this.touchYStart = e.clientY;
+        }
+    }
+    
+    // Cancel movement (Reset variables)
+    touchEnd( e ){
+        this.touchXStart = null;
+        this.touchYStart = null;
+    }
+    
+    // Check movement
+    touchEnd( e ){
+        
+        if( this.touchXStart === null || this.touchYStart === null ) return;
+        
+        if( "ontouchend" in window ){
+            // Touchendt: We only take care of the fisrt touch
+            this.touchXEnd = e.changedTouches[0].clientX;
+            this.touchYEnd = e.changedTouches[0].clientY;
+        }
+        else{
+            // Mousedown
+            this.touchXEnd = e.clientX;
+            this.touchYEnd = e.clientY;
+        }
+        
+        // Check for vertical move, then horizontal. One movement allowed per "touch cycle"
+        if( this.touchYEnd < this.touchYStart ){
+            // Up
+            this.handler( { code: "ArrowUp" } );
+        }
+        else if( this.touchYEnd > this.touchYStart ){
+            // Down
+            this.handler( { code: "ArrowDown" } );
+        }
+        else if( this.touchXEnd < this.touchXStart ){
+            // Down
+            this.handler( { code: "ArrowLeft" } );
+        }
+        else if( this.touchXEnd > this.touchXStart ){
+            // Down
+            this.handler( { code: "ArrowRight" } );
+        }
+        
+    }
+    
     /*========================
         Class Methods
     ========================*/
@@ -235,6 +315,17 @@ class KonamiCode{
     static needJoystick( keyCode ){
         return [65, 66, 88, 89, "KeyA", "KeyB", "KeyX", "KeyY" ].indexOf( keyCode ) != -1;
     }
+    
+    // Check if it's a mobile device
+    static isMobile( options ){
+        
+        const groups = [ /Android/i, /iPhone/i, /iPod/i, /iPad/i, /Windows Phone/i, /webOS/i, /SymbianOS/i, /RIM/i, /BB/i ];
+        const useragent = navigator.userAgent;
+
+        return groups.find( g => useragent.match( g ) )? true : false;
+        
+    }
+    
 }
 
 // Keys for codes
