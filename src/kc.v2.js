@@ -39,7 +39,7 @@ class KonamiCode{
         this.currentSequence = [];
         
         this.domParser = new DOMParser();
-        this.appendStyles();
+        KonamiCode.appendStyles();
         
         // Check event for handler keys
         if( !setup.event || ( setup.event && KonamiCode.keyboardEvent.indexOf( setup.event ) == -1 ) ){
@@ -105,23 +105,6 @@ class KonamiCode{
             
             // Save the sequence
             this.codes.push( code );
-            
-        }
-        
-    }
-    
-    // Import the CSS style inline to the code
-    appendStyles(){
-        
-        // Load valid skins
-        for( const skin of Object.values( KonamiCode.skins ) ){
-            
-            const link = document.createElement( "LINK" );
-            link.href = `${KonamiCode.source}skins/${skin}.css`;
-            link.type = "text/css";
-            link.rel = "stylesheet";
-            
-            document.querySelector( "head" ).append( link );
             
         }
         
@@ -326,6 +309,36 @@ class KonamiCode{
         
     }
     
+    // Import the CSS style inline to the code
+    static appendStyles(){
+        
+        this.htmlTemplates = {};
+        
+        // Load valid skins && html templates
+        for( const skin of Object.values( this.skins ) ){
+            
+            const link = document.createElement( "LINK" );
+            link.href = `${this.source}skins/${skin}/style.css`;
+            link.type = "text/css";
+            link.rel = "stylesheet";
+            
+            document.querySelector( "head" ).append( link );
+            
+            // HTML Template
+            fetch( `src/skins/${skin}/config.json` )
+            .then( response => response.json() )
+            .then( json => {
+                
+                this.htmlTemplates[ skin ] = json.html? json.html : '<div></div>';
+                
+            })
+            .catch( e => {
+                this.htmlTemplates[ skin ] = '<div></div>';
+            });
+            
+        }
+        
+    }
 }
 
 // Keys for codes
