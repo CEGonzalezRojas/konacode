@@ -357,7 +357,18 @@ class KonamiCode{
             const element = this.activeJoystick.querySelector( `[${key}]` );
             if( element ){
                 
-                element.addEventListener( "click", _ => { this.handler( { code: `Key${key.toUpperCase()}` } ) } );
+                element.addEventListener( "animationend", e => {
+                    if( e.animationName == `${skin}-joystick-clicked`){
+                        element.removeAttribute( 'clicked' );
+                    }
+                });
+                
+                element.addEventListener( "click", e => {
+                    
+                    element.setAttribute( 'clicked', true );
+                    this.handler( { code: `Key${key.toUpperCase()}` } );
+                    
+                });
                 
             }
         }

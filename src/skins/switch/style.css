@@ -19,11 +19,14 @@ kcjoystick[data-skin|=switch]{
     height: 400px;
     font-family: 'Helvetica', sans-serif;
     transform: translate(-130px,0px);
-    transition: transform 0.3s ease-in-out;
+    -webkit-animation: switch-joystick-show 0.3s ease-in-out forwards;
+    animation: switch-joystick-show 0.3s ease-in-out forwards;
 }
 
-kcjoystick[data-skin|=switch].active{
+kcjoystick[data-skin|=switch].hide{
     transform: translate(0px,0px);
+    -webkit-animation: switch-joystick-hide 0.3s 0.4s ease-in-out forwards;
+    animation: switch-joystick-hide 0.3s 0.4s ease-in-out forwards;
 }
 
 kcjoystick[data-skin|=switch] > .right{
@@ -126,6 +129,7 @@ kcjoystick[data-skin|=switch] > .buttons > [x]::before, kcjoystick[data-skin|=sw
 kcjoystick[data-skin|=switch] > .buttons > [x]{
     top: 29px;
     left: 37px;
+    cursor: pointer;
 }
 
 kcjoystick[data-skin|=switch] > .buttons > [x]:after{
@@ -135,6 +139,7 @@ kcjoystick[data-skin|=switch] > .buttons > [x]:after{
 kcjoystick[data-skin|=switch] > .buttons > [y]{
     top: 59px;
     left: 6px;
+    cursor: pointer;
 }
 
 kcjoystick[data-skin|=switch] > .buttons > [y]:after{
@@ -144,6 +149,7 @@ kcjoystick[data-skin|=switch] > .buttons > [y]:after{
 kcjoystick[data-skin|=switch] > .buttons > [a]{
     top: 59px;
     right: 2px;
+    cursor: pointer;
 }
 
 kcjoystick[data-skin|=switch] > .buttons > [a]:after{
@@ -153,10 +159,16 @@ kcjoystick[data-skin|=switch] > .buttons > [a]:after{
 kcjoystick[data-skin|=switch] > .buttons > [b]{
     top: 88px;
     left: 37px;
+    cursor: pointer;
 }
 
 kcjoystick[data-skin|=switch] > .buttons > [b]:after{
     content: 'B';
+}
+
+kcjoystick[data-skin|=switch] > .buttons > [a][clicked], kcjoystick[data-skin|=switch] > .buttons > [b][clicked], kcjoystick[data-skin|=switch] > .buttons > [x][clicked], kcjoystick[data-skin|=switch] > .buttons > [y][clicked]{
+    -webkit-animation: switch-joystick-clicked 0.4s 1;
+    animation: switch-joystick-clicked 0.4s 1;
 }
 
 kcjoystick[data-skin|=switch] > .buttons > [t]{
@@ -269,6 +281,40 @@ kcjoystick[data-skin=switch-rainbow] > .front{
     }
 }
 
+@-webkit-keyframes switch-joystick-show{
+    from{
+        transform: translate(-130px,0px);
+    }
+    to{
+        transform: translate(0px,0px);
+    }
+}
+
+@-webkit-keyframes switch-joystick-hide{
+    from{
+        transform: translate(0px,0px);
+    }
+    to{
+        transform: translate(-130px,0px);
+    }
+}
+
+@-webkit-keyframes switch-joystick-clicked{
+    0%{
+        font-size: 0.8em;
+        box-shadow: -4px 0px 2px rgba(0,0,0,.2);
+    }
+    50%{
+        
+        font-size: 0.7em;
+        box-shadow: none;
+    }
+    100%{
+        font-size: 0.8em;
+        box-shadow: -4px 0px 2px rgba(0,0,0,.2);
+    }
+}
+
 @keyframes switch-anim-rainbow {
     0%{
         background-color: var(--switch-red);
@@ -290,5 +336,39 @@ kcjoystick[data-skin=switch-rainbow] > .front{
     }
     100%{
         background-color: var(--switch-red);
+    }
+}
+
+@keyframes switch-joystick-show{
+    from{
+        transform: translate(-130px,0px);
+    }
+    to{
+        transform: translate(0px,0px);
+    }
+}
+
+@keyframes switch-joystick-hide{
+    from{
+        transform: translate(0px,0px);
+    }
+    to{
+        transform: translate(-130px,0px);
+    }
+}
+
+@keyframes switch-joystick-clicked{
+    0%{
+        font-size: 0.8em;
+        box-shadow: -4px 0px 2px rgba(0,0,0,.2);
+    }
+    50%{
+        
+        font-size: 0.7em;
+        box-shadow: none;
+    }
+    100%{
+        font-size: 0.8em;
+        box-shadow: -4px 0px 2px rgba(0,0,0,.2);
     }
 }

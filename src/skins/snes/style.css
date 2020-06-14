@@ -28,8 +28,9 @@ kcjoystick[data-skin|=snes]{
 }
 
 kcjoystick[data-skin|=snes].hide{
-    -webkit-animation: snes-joystick-hide 0.3s ease-in-out forwards;
-    animation: snes-joystick-hide 0.3s ease-in-out forwards;
+    transform: translate(0px,0px);
+    -webkit-animation: snes-joystick-hide 0.3s 0.4s ease-in-out forwards;
+    animation: snes-joystick-hide 0.3s 0.4s ease-in-out forwards;
 }
 
 kcjoystick[data-skin|=snes] > .back{
@@ -201,7 +202,7 @@ kcjoystick[data-skin|=snes] > .buttons.down::after{
 }
 
 kcjoystick[data-skin|=snes] > .buttons > div{
-    width: 36px;
+    width: 40px;
     height: 40px;
     border-radius: 40px;
     margin-left: 5px;
@@ -214,13 +215,18 @@ kcjoystick[data-skin|=snes] > .buttons > div{
 }
 
 kcjoystick[data-skin|=snes] > .buttons > div[clicked]{
-    -webkit-animation: clicked 0.4s 1;
-    animation: clicked 0.4s 1;
+    -webkit-animation: snes-joystick-clicked 0.4s 1;
+    animation: snes-joystick-clicked 0.4s 1;
 }
 
 kcjoystick[data-skin|=snes] > .buttons > div:nth-child(2){
     margin-left: 0px;
     margin-right: 5px;
+}
+
+kcjoystick[data-skin|=snes] > .buttons > div[a], kcjoystick[data-skin|=snes] > .buttons > div[b], kcjoystick[data-skin|=snes] > .buttons > div[x], kcjoystick[data-skin|=snes] > .buttons > div[y]{
+    cursor: pointer;
+    box-sizing: border-box;
 }
 
 kcjoystick[data-skin|=snes] > .buttons > div[y]{
@@ -240,21 +246,18 @@ kcjoystick[data-skin|=snes] > .buttons > div[a]{
 }   
 
 /* Safari 4.0 - 8.0 */
-@-webkit-keyframes clicked{
+@-webkit-keyframes snes-joystick-clicked{
     0%{
-        width: 36px;
         border-left: 2px solid rgba(0,0,0,.2);
         border-right: 2px solid rgba(255,255,255,.2);
         box-shadow: -4px 0px 2px rgba(0,0,0,.2);
     }
     50%{
-        width: 40px;
         border-left-width: 0px;
         border-right-width: 0px;
         box-shadow: none;
     }
     100%{
-        width: 36px;
         border-left: 2px solid rgba(0,0,0,.2);
         border-right: 2px solid rgba(255,255,255,.2);
         box-shadow: -4px 0px 2px rgba(0,0,0,.2);
@@ -280,21 +283,18 @@ kcjoystick[data-skin|=snes] > .buttons > div[a]{
 }
 
 /* Standard syntax */
-@keyframes clicked{
+@keyframes snes-joystick-clicked{
     0%{
-        width: 36px;
         border-left: 2px solid rgba(0,0,0,.2);
         border-right: 2px solid rgba(255,255,255,.2);
         box-shadow: -4px 0px 2px rgba(0,0,0,.2);
     }
     50%{
-        width: 40px;
         border-left-width: 0px;
         border-right-width: 0px;
         box-shadow: none;
     }
     100%{
-        width: 36px;
         border-left: 2px solid rgba(0,0,0,.2);
         border-right: 2px solid rgba(255,255,255,.2);
         box-shadow: -4px 0px 2px rgba(0,0,0,.2);
