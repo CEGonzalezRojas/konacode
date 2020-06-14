@@ -281,22 +281,27 @@ class KonamiCode{
             this.touchYEnd = e.clientY;
         }
         
+        // The bigger difference is the direction ( Default vertical )
         // Check for vertical move, then horizontal. One movement allowed per "touch cycle"
-        if( this.touchYEnd + this.touchMinMove < this.touchYStart ){
-            // Up
-            this.handler( { code: "ArrowUp" } );
+        if( Math.abs( this.touchYEnd - this.touchYStart ) >= Math.abs( this.touchXEnd - this.touchXStart ) ){
+            if( this.touchYEnd + this.touchMinMove < this.touchYStart ){
+                // Up
+                this.handler( { code: "ArrowUp" } );
+            }
+            else if( this.touchYEnd - this.touchMinMove > this.touchYStart ){
+                // Down
+                this.handler( { code: "ArrowDown" } );
+            }
         }
-        else if( this.touchYEnd - this.touchMinMove > this.touchYStart ){
-            // Down
-            this.handler( { code: "ArrowDown" } );
-        }
-        else if( this.touchXEnd + this.touchMinMove < this.touchXStart ){
-            // Down
-            this.handler( { code: "ArrowLeft" } );
-        }
-        else if( this.touchXEnd - this.touchMinMove > this.touchXStart ){
-            // Down
-            this.handler( { code: "ArrowRight" } );
+        else{
+            if( this.touchXEnd + this.touchMinMove < this.touchXStart ){
+                // Down
+                this.handler( { code: "ArrowLeft" } );
+            }
+            else if( this.touchXEnd - this.touchMinMove > this.touchXStart ){
+                // Down
+                this.handler( { code: "ArrowRight" } );
+            }   
         }
         
     }
