@@ -18,18 +18,9 @@
                         codes: [
                             {
                                 skin: KonamiCode.skins.SNES,
-                                color: KonamiCode.colors.RAINBOW,
-                                callback: exec =>{
-                                    if( exec ){
+                                callback: _ =>{
 
-                                        document.body.append( new DOMParser().parseFromString( '<iframe id="completo" src="https://www.youtube.com/embed/wOL3XQcAgsA?autoplay=1" frameborder="0" allowfullscreen allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" style="position:fixed; top: 0; left: 0; height: 100%; width: 100%; pointer-events: none;"></iframe>', 'text/html' ).body.firstChild );
-
-                                    }
-                                    else{
-
-                                        document.querySelector("#completo").remove();
-
-                                    }
+                                    document.body.append( new DOMParser().parseFromString( '<iframe id="completo" src="https://www.youtube.com/embed/wOL3XQcAgsA?autoplay=1" frameborder="0" allowfullscreen allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" style="position:fixed; top: 0; left: 0; height: 100%; width: 100%; pointer-events: none;"></iframe>', 'text/html' ).body.firstChild );
 
                                 },
                                 progress: (count, percent) => {
@@ -60,10 +51,10 @@
                                 }
                             },
                             {
-                                sequence: [ KonamiCode.keys.UP, KonamiCode.keys.DOWN, KonamiCode.keys.DOWN, KonamiCode.keys.X ],
+                                sequence: [ KonamiCode.keys.UP, KonamiCode.keys.UP, KonamiCode.keys.DOWN, KonamiCode.keys.DOWN, KonamiCode.keys.LEFT, KonamiCode.keys.RIGHT, KonamiCode.keys.LEFT, KonamiCode.keys.RIGHT, KonamiCode.keys.B, KonamiCode.keys.A, KonamiCode.keys.X ],
                                 skin: KonamiCode.skins.SWITCH,
                                 callback: exec =>{
-                                
+                                    console.log( "i win");
                                 }
                             }
                         ]

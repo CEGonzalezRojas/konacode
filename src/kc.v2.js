@@ -37,6 +37,7 @@ class KonamiCode{
         // Saving reference
         KonamiCode.n_n = this;
         this.currentSequence = [];
+        this.delayedDelta = 500;
         
         this.domParser = new DOMParser();
         KonamiCode.appendStyles();
@@ -141,6 +142,8 @@ class KonamiCode{
     // Handler event for keys
     handler( e ){
         
+        this.cleanExecTimeout();
+        
         if( !KonamiCode.n_n || ( !e.code && !e.keyCode ) ) return;
         
         const keyCode = this.transcript( e.code || e.keyCode );
@@ -152,6 +155,7 @@ class KonamiCode{
         this.validCodes = this.validCodes.filter( code => code.sequence[ currentIndex ] == keyCode );
         
         if( this.validCodes.length ){
+            
             this.currentSequence.push( keyCode );    
             
             // Call to progress callback
@@ -168,16 +172,9 @@ class KonamiCode{
             
             if( sequenceFinish.length ){
                 
-                // If only one, execute and reset
-                if( sequenceFinish.length == 1 ){
-                    //this.exec( sequenceFinish[0] );
-                    
-                }
-                else{
-                    
-                }
+                // If only one, execute and reset (If there more than one, delayed the execution)
+                this.exec( sequenceFinish[0], this.validCodes.length != 1 );
                 
-                this.resetCurrentSequence();
             }
             else{
                 
@@ -197,6 +194,40 @@ class KonamiCode{
         else{
             this.resetCurrentSequence();
         }
+    }
+    
+    // Execute the callback
+    exec( code, delayed ){
+        
+        console.log( code, delayed );
+        
+        if( code && code.callback ){
+            
+            if( delayed ){
+                
+                // Wait for execution
+                this.execTimeout = setTimeout( _ => { this.exec( code ) }, this.delayedDelta );
+                
+            }
+            else{
+                
+                if( typeof code.callback == 'function' ) code.callback();
+                
+                this.resetCurrentSequence();
+            }
+            
+        }
+        else{
+            this.resetCurrentSequence();
+        }
+        
+    }
+    
+    // Clean the exec delayed
+    cleanExecTimeout(){
+        
+        clearTimeout( this.execTimeout );
+        
     }
     
     // Clean the sequence
@@ -338,9 +369,11 @@ class KonamiCode{
         
         // Get the skin
         const skin = setup && setup.skin? setup.skin : KonamiCode.skins.SNES;
+        const color = setup && setup.color? setup.color : null;
         
         // Create the html element, assign events and append to the body
         this.activeJoystick = this.domParser.parseFromString( KonamiCode.htmlTemplates[ skin ], 'text/html' ).body.firstChild;
+        if( color ) this.activeJoystick.dataset.skin = `${skin}-${color}`;
         
         // For removing on hide
         this.activeJoystick.addEventListener( "animationend", e => {
