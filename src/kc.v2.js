@@ -49,6 +49,7 @@ class KonamiCode{
         
         // For mobile support
         this.touchXStart = this.touchXEnd = this.touchYStart = this.touchYEnd = null;
+        this.touchMinMove = 10;
         
         this.events();
     }
@@ -281,19 +282,19 @@ class KonamiCode{
         }
         
         // Check for vertical move, then horizontal. One movement allowed per "touch cycle"
-        if( this.touchYEnd < this.touchYStart ){
+        if( this.touchYEnd + this.touchMinMove < this.touchYStart ){
             // Up
             this.handler( { code: "ArrowUp" } );
         }
-        else if( this.touchYEnd > this.touchYStart ){
+        else if( this.touchYEnd - this.touchMinMove > this.touchYStart ){
             // Down
             this.handler( { code: "ArrowDown" } );
         }
-        else if( this.touchXEnd < this.touchXStart ){
+        else if( this.touchXEnd + this.touchMinMove < this.touchXStart ){
             // Down
             this.handler( { code: "ArrowLeft" } );
         }
-        else if( this.touchXEnd > this.touchXStart ){
+        else if( this.touchXEnd - this.touchMinMove > this.touchXStart ){
             // Down
             this.handler( { code: "ArrowRight" } );
         }
