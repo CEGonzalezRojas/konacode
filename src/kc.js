@@ -1,418 +1,541 @@
-// Implementación del Konami Code en JS
-// Author: Claudio Esteban Gonzalez Rojas @cegonzalezrojas
+/* 
+KonamiCodeJS
+Author: Claudio Esteban Gonzalez Rojas @cegonzalezrojas
+
+JS Implementation of the classic code. Features:
+1. Support for desktop and mobile
+2. Support for the original Konami Code sequence
+3. You can make your own custom sequences
+4. Skins for customize the experience
+5. Sequences should start with UP, DOWN, LEFT or RIGHT
+*/
 class KonamiCode{
     
-    // Constructor de la clase: Guardado de opciones de usuario
-    constructor( options ){
-        
-        // Si ya existe un KC activo
-        if( window.ko_co ) return;
-        
-        // Guardar referencia a KC en window
-        window.ko_co = this;
-        
-        // Realizar la carga de los estilos
-        this.append_styles();
-        
-        // Definición de propiedades:
-        this.step = 0,      // Para saber paso de secuencia
-        this.count = 0;     // Número de veces que se ha ejecutado el código
-        
-        // Propiedades para compatibilidad móvil
-        this.last_x = 0;
-        this.last_y = 0;
-        
-        // Opciones por defecto
-        this.options = {
-            max: -1, // Cantidad de veces que puede ser usado el código por sesión.
-            event: "keyup", // Solo un evento permitido para la revisión del código
-            mobile_event_start: [ "mousedown", "touchstart" ], // Eventos para revisión compatible con dispositivos táctiles
-            mobile_event_end: [ "mouseup", "touchend" ],
-            secuence: [ 38, 38, 40, 40, 37, 39, 37, 39, 66, 65], // Secuencia base para el código
-            mobile_secuence: [], // Secuencia móvil para el código,
-            valid_keys: {   // Llaves y códigos válidos para el código
-                "A": 65,
-                "B": 66,
-                "X": 88,
-                "Y": 89,
-                "UP": 38,
-                "DOWN": 40,
-                "LEFT": 37,
-                "RIGHT": 39
+    /* Setup is an object with like:
+    {
+        codes: [    // Array of Objects.
+            {
+                sequence: [ KonamiCode.keys.UP, KonamiCode.keys.UP, ... ],    // Array with sequence. Allowed 'keys' values are in KonamiCode.keys. You can also use the values ( "UP", "DOWN", … ). 3 keys minimun
+                then: _ => { ... }  // Function to be called when the sequence is complete,
+                skin: KonamiCode.skins.SKIN // Skin for the joystick.
+                color: KonamiCode.colors.COLOR  // Some skins have color variations
             },
-            need_keyboard: [ 65, 66, 88, 89 ],
-            callback: null, // Función llamada al completar el código
-        };
+            –
+        ],
+        event: 'keyup' // String that indicate the keyboard event to handler ( keyup || keydown )
+    }
+    */
+    constructor( setup ){
         
-        // Si se configuro con opciones
-        if( options && typeof options == "object" && !Array.isArray( options ) ){
+        // Only one instance per machine
+        if( KonamiCode.n_n ) throw new Error( 'Only one instance of KC allowed' );
+        
+        this.register( setup.codes );
+        
+        // If all the codes where invalid
+        if( !this.codes.length ) throw new Error( 'You have to define at least 1 valid code' );
+    
+        // Saving reference
+        KonamiCode.n_n = this;
+        this.currentSequence = [];
+        this.delayedDelta = 500;
+        
+        this.domParser = new DOMParser();
+        KonamiCode.appendStyles();
+        
+        // Check event for handler keys
+        if( !setup.event || ( setup.event && KonamiCode.keyboardEvent.indexOf( setup.event ) == -1 ) ){
+            setup.event = 'keyup';
+        }
+        this.keyboardEvent = 'keyup';
+        
+        // For mobile support
+        this.touchXStart = this.touchXEnd = this.touchYStart = this.touchYEnd = null;
+        this.touchMinMovement = 15;
+        
+        this.activeJoystick = null;
+        
+        this.events();
+    }
+    
+    // Register 1 or more codes
+    register( codes ){
+        
+        // Parsing the setup, check everything is fine
+        if( !codes ) throw new Error( 'You have to define at least 1 code' );
+        
+        if( !Array.isArray( codes ) ){
+            codes = [ codes ];
+        }
+        
+        const basicSetup = KonamiCode.basicSetup();
+        if( !this.codes) this.codes = [];
+        
+        for( const code of codes ){
             
-            // Hacer merge manual para comprobaciones
-            
-            // Max
-            if( options.max && parseInt( options.max ) ){
-                this.options.max = parseInt( options.max );
-            }
-            
-            // Event
-            if( options.event && typeof options.event == "string" ){
-                this.options.event = options.event;
-            }
-            
-            // Obtención de las llaves y valores válidos
-            var keys = Object.keys( this.options.valid_keys );
-            var values = Object.values( this.options.valid_keys );
-            
-            // Secuencia de teclas
-            if( options.secuence && Array.isArray( options.secuence ) && options.secuence.length > 1 ){
+            // Check sequence. Remove invalid keys from it
+            if( code.sequence ){
                 
-                // Mapear la secuencia para validar datos
-                options.secuence = options.secuence.map( o => o.toUpperCase ? o.toUpperCase() : o  );
+                if( !Array.isArray( code.sequence ) || code.sequence.length < 3 ) continue;
                 
-                // Revisión de los elementos de la secuencia del usuario
-                options.secuence = options.secuence.filter( o => keys.indexOf( o ) != -1 || values.indexOf( o ) != -1 );
+                code.sequence = code.sequence.map( k => k.toUpperCase ? k.toUpperCase() : k  );
                 
-                // Si la nueva secuencia tiene al menos 2 elementos válidos
-                if( options.secuence.length > 1 ){
-                    
-                    // Limpiar la secuencia actual
-                    this.options.secuence = [];
-                    
-                    // Agregar valores
-                    options.secuence.forEach( o => this.options.secuence.push( parseInt(o)? parseInt(o) : this.options.valid_keys[ o ] ) );
-                    
+                // Check if start with UP, DOWN, LEFT, RIGHT
+                if( [ KonamiCode.keys.UP, KonamiCode.keys.DOWN, KonamiCode.keys.LEFT, KonamiCode.keys.RIGHT ].indexOf( code.sequence[0] ) == -1 ) continue;
+                
+                const keysValues = Object.values( KonamiCode.keys );
+                if( code.sequence.join() != code.sequence.filter( key => keysValues.indexOf( key ) != -1 ).join() ){
+                    continue;
                 }
-                                             
+                
+            }
+            else{
+                code.sequence = basicSetup.sequence;
             }
             
-            // Generar la secuencia móvil
-            this.options.secuence.forEach( o => this.options.mobile_secuence.push( keys[ values.indexOf( o ) ] ) );
-            
-            // Callback
-            if( options.callback && typeof options.callback == "function" ){
-                this.options.callback = options.callback;
+            // Check skin
+            if( code.skin && ( typeof code.skin != "string" || Object.values( KonamiCode.skins ).indexOf( code.skin ) == -1 ) ){
+                code.skin = basicSetup.skin;
             }
+            
+            // Check color
+            if( code.color && ( typeof code.color != "string" || Object.values( KonamiCode.colors ).indexOf( code.color ) == -1 ) ){
+                delete code.color;
+            }
+            
+            // Remove previous code if exists
+            if( this.codes.find( c => c.sequence.join() == code.sequence.join()) ){
+                this.codes.splice( this.codes.findIndex( c => c.sequence.join() == code.sequence.join()), 1 );
+            }
+            
+            // Save the sequence
+            this.codes.push( code );
             
         }
         
-        // Aplicar evento para revisión
-        window.addEventListener( this.options.event , this.handler , { passive: true });
+    }
+    
+    // Set handler for both desktop & mobile
+    events(){
         
-        // Aplicar evento para la revisón compatible con dispositivos táctiles
-        this.options.mobile_event_start.forEach( event => window.addEventListener( event , this.mobile_handler_start , { passive: true } ) );
-        
-        this.options.mobile_event_end.forEach( event => window.addEventListener( event , this.mobile_handler_end , { passive: true } ) );
+        if( KonamiCode.isMobile() ){
+            
+            if( "ontouchstart" in window ){
+                // Touch events
+                window.addEventListener( "touchstart", e => { this.touchStart(e); })
+                window.addEventListener( "touchend", e => { this.touchEnd(e); })
+                window.addEventListener( "touchcancel", e => { this.touchCancel(e); })
+            } 
+            else{
+                // Mouse events
+                window.addEventListener( "mousedown", e => { this.touchStart(e); })
+                window.addEventListener( "mouseup", e => { this.touchEnd(e); })
+            }
+            
+        }
+        else{
+            // Keyboard
+            window.addEventListener( this.keyboardEvent , e => { this.handler(e); } );
+        }
         
     }
     
-    // Método para la revisión de las teclas
+    // Handler event for keys
     handler( e ){
         
-        // Si no hay KonamiCode o no hay keyCode
-        if( !window.ko_co || !e.keyCode ) return;
+        this.cleanExecTimeout();
         
-        // Flag para saber si debe continuar o no
-        var continue_flag = true;
+        if( !KonamiCode.n_n || ( !e.code && !e.keyCode ) ) return;
         
-        // Obtener código
-        var key = e.keyCode;
+        const keyCode = this.transcript( e.code || e.keyCode );
         
-        // Revisar si cumple con el paso actual
-        if( key !== window.ko_co.options.secuence[ window.ko_co.step ] ) continue_flag = false;
+        // Obtain the current index and check if there a sequence on the way
+        const currentIndex = this.currentSequence.length;
         
-        // Revisar si debe continuar o no
-        if( !continue_flag ){
+        if( !this.validCodes ) this.validCodes = this.codes;
+        
+        const invalidCodes = this.validCodes.filter( code => code.sequence[ currentIndex ] != keyCode );
+        this.validCodes = this.validCodes.filter( code => code.sequence[ currentIndex ] == keyCode );
+        
+        if( this.validCodes.length ){
             
-            // Resetear valores
-            window.ko_co.reset();
+            this.currentSequence.push( keyCode );    
+            
+            // Call to progress callback
+            for( const code of this.validCodes ){
+                
+                if( code.progress && typeof code.progress == 'function' ){
+                    code.progress( this.currentSequence.length , Math.floor( this.currentSequence.length / code.sequence.length * 100 ) );
+                }
+                
+            }
+            
+            for( const code of invalidCodes ){
+                
+                if( code.progress && typeof code.progress == 'function' ){
+                    code.progress( 0, 0 );
+                }
 
-            return;
-        }
-        
-        // Ver si es necesario mostrar el teclado o no
-        window.ko_co.request_keyboard( window.ko_co.step + 1 );
-        
-        // El step aumenta y se comprueba si es ya se supero el último paso
-        if( ++(window.ko_co.step) >= window.ko_co.options.secuence.length ){
+            }
             
-            // Se ejecuta el código
-            window.ko_co.do();
+            // Sequence finish?
+            const sequenceFinish = this.validCodes.filter( code => code.sequence.length == this.currentSequence.length );
             
-        }
-        
-    }
-    
-    // Método para revisión de código en móviles o dispositivos táctiles
-    mobile_handler_start( e ){
-        
-        // Si no hay KonamiCode
-        if( !window.ko_co || window.ko_co.snes_joystick ) return;
+            if( sequenceFinish.length ){
                 
-        // Guardar los valores iniciales de X e Y
-        window.ko_co.last_x = e.clientX || (e.originalEvent? e.originalEvent.pageX : 0) || (e.changedTouches && e.changedTouches[0]? e.changedTouches[0].clientX : 0);
-        
-        window.ko_co.last_y = e.clientY || (e.originalEvent? e.originalEvent.pageY : 0) || (e.changedTouches && e.changedTouches[0]? e.changedTouches[0].clientY : 0);
-        
-    }
-    
-    // Método para revisión de código en móviles o dispositivos táctiles
-    mobile_handler_end( e ){
-        
-        // Si no hay KonamiCode
-        if( !window.ko_co || window.ko_co.snes_joystick ) return;
+                // If only one, execute and reset (If there more than one, delayed the execution)
+                this.exec( sequenceFinish[0], this.validCodes.length != 1 );
                 
-        // Obtener los valores de cambio
-        var move_x = e.clientX || (e.originalEvent? e.originalEvent.pageX : 0) || (e.changedTouches && e.changedTouches[0]? e.changedTouches[0].clientX : 0);
-        
-        var move_y = e.clientY || (e.originalEvent? e.originalEvent.pageY : 0) || (e.changedTouches && e.changedTouches[0]? e.changedTouches[0].clientY : 0);
-
-        // Flag para saber si debe continuar o no
-        var continue_flag = true;
-        
-        // Revisión de paso
-        switch( window.ko_co.options.mobile_secuence[ window.ko_co.step ] ){
-            case "UP":
+            }
+            else{
                 
-                // Si no fue un movimiento hacia arriba
-                if( move_y >= window.ko_co.last_y ) continue_flag = false;
+                // Check for the next key. If there is a code that need joystick, show it! (If there are more than one, it use the first skin)
+                const nextKeys = this.validCodes.filter( code => KonamiCode.needJoystick( this.transcript( code.sequence[ this.currentSequence.length ] ) ) );
                 
-                break;
-            case "DOWN":
-                
-                // Si no fue un movimiento hacia abajo
-                if( move_y <= window.ko_co.last_y ) continue_flag = false;
-                
-                break;
-            case "LEFT":
-                
-                // Si no fue un movimiento hacia abajo
-                if( move_x >= window.ko_co.last_x ) continue_flag = false;
-                
-                break;
-            case "RIGHT":
-                
-                // Si no fue un movimiento hacia abajo
-                if( move_x <= window.ko_co.last_x ) continue_flag = false;
-                
-                break;
-            default:
-                
-                // Revisión de la tecla envíada ( A|B por ahora )
-                if( e.key !== window.ko_co.options.mobile_secuence[ window.ko_co.step ] )  continue_flag = false;
-                
-                break;
-        }
-        
-        // Revisar si debe continuar o no
-        if( !continue_flag ){
-            
-            // Resetear valores
-            window.ko_co.reset();
-
-            return;
-        }
-        
-        // Revisar si el siguiente paso requiere de teclado
-        window.ko_co.request_keyboard( window.ko_co.step + 1 );
-        
-        // El step aumenta y se comprueba si es ya se supero el último paso
-        if( ++(window.ko_co.step) >= window.ko_co.options.secuence.length ){
-            
-            // Se ejecuta el código
-            window.ko_co.do();
-            
-        }
-        
-    }
-    
-    // Método activado cuando la ejecución del código fue éxitosa
-    do(){
-        
-        // Reinicio de contador de pasos
-        this.step = 0;
-        
-        // Aumentar el contador de veces
-        this.count++;
-        
-        // Si existe un máximo de veces a ejecutar del código y fue igualado o sobrepasado, quitar evento
-        if( this.options.max != -1 && this.count >= this.options.max ){
-        
-            // Quitar evento
-            window.removeEventListener( this.options.event , this.handler );
-           
-        }
-        
-        // Llamar a callback si es que existe
-        if( this.options.callback && typeof this.options.callback == "function" ){
-            
-            // Llamar a función
-            this.options.callback( true );
-            
-            // Añadir evento para cancelación
-            window.addEventListener( "click", this.cancel );
-            window.addEventListener( "keyup", this.cancel );
-            
-        }
-    }
-    
-    // Volver los valores de los pasos actuales a 0
-    reset(){
-        
-        // Resetear pasos
-        this.step = 0;
-
-        // Ocultar teclado ( Si existe )
-        this.keyboard( false );
-        
-    }
-    
-    // Método para llamar a callback y terminar la ejecución realizada
-    cancel( e ){
-        
-        // Si no hay KonamiCode o no hay keyCode
-        if( !window.ko_co || !window.ko_co.options.callback || typeof window.ko_co.options.callback != "function" ) return;
-        
-        // Remover evento para cancelación
-        window.removeEventListener( "click", window.ko_co.cancel );
-        window.removeEventListener( "keyup", window.ko_co.cancel );
-        
-        // Llamar a función para cancelar
-        window.ko_co.options.callback( false );
-        
-    }
-    
-    // Revisión si el próximo paso requiere de teclado
-    request_keyboard( step ){
-        
-        // Revisar si el siguiente paso requiere de teclado.
-        if(  this.options.need_keyboard.indexOf( this.options.secuence[ step ] ) != -1 ){
-            
-            // Mostrar teclado
-            this.keyboard( true );
-            
-        }
-        else{
-            
-            // Ocultar teclado
-            this.keyboard( false );
-            
-        }
-        
-    }
-    
-    // Agregar/Remover el teclado en pantalla para la ejecución del código
-    keyboard( show ){
-        
-        // Si se necesita mostrar teclado
-        if( show ){
-            
-            // Si ya existe teclado, retornar
-            if( this.snes_joystick ) return;
-            
-            // Generar clon a partir del template
-            this.snes_joystick = this.snes_joystick_generator();
-            
-            // Insertar en body
-            document.body.append( this.snes_joystick );
-            
-            // Activar teclado
-            setTimeout( e => this.snes_joystick.classList.add( "active" ), 100 );
-            
-        }
-        else{
-            
-            // Comprobar existencia de teclado
-            if( this.snes_joystick ){
-                
-                // Guardar referencia
-                var last_keyboard = this.snes_joystick;
-                
-                // Eliminar referencia
-                this.snes_joystick = null;
-                
-                // Desactivar y eliminar
-                last_keyboard.addEventListener( "transitionend", e => {
-                    last_keyboard.remove();
-                });
-                
-                // Quitar la clase active
-                last_keyboard.classList.remove( "active" );
+                if( nextKeys.length ){
+                    this.showJoystick( nextKeys[0] );
+                }
+                else{
+                    this.hideJoystick();
+                }
                 
             }
             
         }
+        else{
+            this.resetCurrentSequence();
+        }
+    }
+    
+    // Execute the callback
+    exec( code, delayed ){
+        
+        if( code && code.callback ){
+            
+            if( delayed ){
+                
+                // Wait for execution
+                this.execTimeout = setTimeout( _ => { this.exec( code ) }, this.delayedDelta );
+                
+            }
+            else{
+                
+                if( typeof code.callback == 'function' ) code.callback();
+                
+                this.resetCurrentSequence();
+            }
+            
+        }
+        else{
+            this.resetCurrentSequence();
+        }
         
     }
     
-    // Generar de joystick de SNES
-    snes_joystick_generator(){
+    // Clean the exec delayed
+    cleanExecTimeout(){
         
-        // Clonar elemento
-        var joystick = new DOMParser().parseFromString( `<div class="snes"><div class="right"></div><div class="right d"></div><div class="back"></div><div class="front"></div><div class="patch"><div n></div><div s></div><div st></div></div><div class="circle"></div><div class="buttons"><div y></div><div x></div></div><div class="buttons down"><div b></div><div a></div></div></div>`, 'text/html' ).body.firstChild;
+        clearTimeout( this.execTimeout );
         
-        // Obtener botones
-        var buttons = joystick.querySelectorAll( ".buttons > div" );
+    }
+    
+    // Clean the sequence
+    resetCurrentSequence(){
         
-        // Generar evento de click
-        Array.from( buttons ).forEach( btn => {
+        // Reset progress
+        for( const code of this.codes ){
+                
+            if( code.progress && typeof code.progress == 'function' ){
+                code.progress( 0, 0 );
+            }
+
+        }
+        
+        this.hideJoystick();
+        
+        this.currentSequence.length = 0;
+        delete this.validCodes;   
+    }
+    
+    // Transcript e.code or e.keyCode to a valid member of a KC sequence
+    transcript( code ){
+        
+        switch( code ){
+            case "ArrowUp":
+            case 38:
+            case KonamiCode.keys.UP:
+                return KonamiCode.keys.UP;
+                break;
+            case "ArrowDown":
+            case 40:
+            case KonamiCode.keys.DOWN:
+                return KonamiCode.keys.DOWN;
+                break;
+            case "ArrowLeft":
+            case 37:
+            case KonamiCode.keys.LEFT:
+                return KonamiCode.keys.LEFT;
+                break;
+            case "ArrowRight":
+            case 39:
+            case KonamiCode.keys.RIGHT:
+                return KonamiCode.keys.RIGHT;
+                break;
+            case "KeyA":
+            case 65:
+            case KonamiCode.keys.A:
+                return KonamiCode.keys.A;
+                break;
+            case "KeyB":
+            case 66:
+            case KonamiCode.keys.B:
+                return KonamiCode.keys.B;
+                break;
+            case "KeyX":
+            case 88:
+            case KonamiCode.keys.X:
+                return KonamiCode.keys.X;
+                break;
+            case "KeyY":
+            case 89:
+            case KonamiCode.keys.Y:
+                return KonamiCode.keys.Y;
+                break;
+            default:
+                return -1;
+        }
+        
+    }
+    
+    // Touch/Mouse events
+    
+    // Save initial position
+    touchStart( e ){
+        
+        if( "ontouchstart" in window ){
+            // Touchstart: We only take care of the fisrt touch
+            this.touchXStart = e.touches[0].clientX;
+            this.touchYStart = e.touches[0].clientY;
+        }
+        else{
+            // Mousedown
+            this.touchXStart = e.clientX;
+            this.touchYStart = e.clientY;
+        }
+    }
+    
+    // Cancel movement (Reset variables)
+    touchEnd( e ){
+        this.touchXStart = null;
+        this.touchYStart = null;
+    }
+    
+    // Check movement
+    touchEnd( e ){
+        
+        if( this.touchXStart === null || this.touchYStart === null ) return;
+        
+        if( "ontouchend" in window ){
+            // Touchendt: We only take care of the fisrt touch
+            this.touchXEnd = e.changedTouches[0].clientX;
+            this.touchYEnd = e.changedTouches[0].clientY;
+        }
+        else{
+            // Mousedown
+            this.touchXEnd = e.clientX;
+            this.touchYEnd = e.clientY;
+        }
+        
+        // The bigger difference is the direction ( Default vertical )
+        // Check for vertical move, then horizontal. One movement allowed per "touch cycle"
+        if( Math.abs( this.touchYEnd - this.touchYStart ) >= Math.abs( this.touchXEnd - this.touchXStart ) ){
+            if( this.touchYEnd + this.touchMinMovement < this.touchYStart ){
+                // Up
+                this.handler( { code: "ArrowUp" } );
+            }
+            else if( this.touchYEnd - this.touchMinMovement > this.touchYStart ){
+                // Down
+                this.handler( { code: "ArrowDown" } );
+            }
+        }
+        else{
+            if( this.touchXEnd + this.touchMinMovement < this.touchXStart ){
+                // Down
+                this.handler( { code: "ArrowLeft" } );
+            }
+            else if( this.touchXEnd - this.touchMinMovement > this.touchXStart ){
+                // Down
+                this.handler( { code: "ArrowRight" } );
+            }   
+        }
+        
+    }
+    
+    // Create a Joystick
+    showJoystick( setup ){
+        
+        if( this.activeJoystick ){
             
-            // Agregar evento para fin de animación
-            btn.addEventListener( "animationend", e => {
-                
-                // Remover el atributo clicked
-                btn.removeAttribute( "clicked" );
-                
-            });
+            if( this.currentSequence.length ){
+                this.activeJoystick.classList.add( "show" );   
+            }
             
-            // Al hacer click, enviar evento
-            btn.addEventListener( "click", e => {
-                
-                // Agregar el atributo clicked
-                btn.setAttribute( "clicked", true );
-                
-                // Detener propagación
-                e.stopPropagation();
-                
-                // Obtener llave y realizar acción
-                var keyCode = this.options.valid_keys[  btn.attributes[0].name.toUpperCase() ];
-                
-                // Solo si existe la llave
-                if( keyCode ){
-                    
-                    // Enviar evento con la tecla seleccionada
-                    this.handler( { keyCode: keyCode } );
-                    
-                }
-                
-            });
+            const color = setup && setup.color? setup.color : null;
+            if( color ){
+                // Only change color
+                const skin = this.activeJoystick.dataset.skin.split( "-" )[0];
+                this.activeJoystick.dataset.skin = `${skin}-${color}`;
+            }
+            
+            return;
+        }
+        
+        // Get the skin
+        const skin = setup && setup.skin? setup.skin : KonamiCode.skins.SNES;
+        const color = setup && setup.color? setup.color : null;
+        
+        // Create the html element, assign events and append to the body
+        this.activeJoystick = this.domParser.parseFromString( KonamiCode.htmlTemplates[ skin ], 'text/html' ).body.firstChild;
+        if( color ) this.activeJoystick.dataset.skin = `${skin}-${color}`;
+        
+        // Activete
+        setTimeout( _ => { this.activeJoystick.classList.add( "show" ); }, 100 );
+        
+        // For removing on hide
+        this.activeJoystick.addEventListener( "transitionend", e => {
+           
+            if( !this.activeJoystick.classList.contains( "show" ) ){
+                this.activeJoystick.remove();
+                this.activeJoystick = null;
+            }
             
         });
         
+        // Keys ( A, B, C, D )
+        for( const key of [ 'a', 'b', 'x', 'y' ] ){
+            const element = this.activeJoystick.querySelector( `[${key}]` );
+            if( element ){
+                
+                element.addEventListener( "animationend", e => {
+                    if( e.animationName == `${skin}-joystick-clicked`){
+                        element.removeAttribute( 'clicked' );
+                    }
+                });
+                
+                element.addEventListener( "click", e => {
+                    
+                    element.setAttribute( 'clicked', true );
+                    this.handler( { code: `Key${key.toUpperCase()}` } );
+                    
+                });
+                
+            }
+        }
         
-        
-        return joystick;
+        document.body.append( this.activeJoystick );
         
     }
     
-    // Agregar los estilos necesarios para el control de SNES
-    append_styles(){
+    // Remove the current joystick
+    hideJoystick(){
         
-        // Crear elemento para cargar estilo
-        var link = document.createElement( "LINK" );
+        if( !this.activeJoystick ) return;
         
-        // Agregar la ruta correcta
-        link.href = `${KonamiCode.source_url}kc.min.css`;
+        this.activeJoystick.classList.remove( "show" );
         
-        // Incluir attributos necesarios
-        link.type = "text/css";
-        link.rel = "stylesheet";
+    }
+    
+    /*========================
+        Class Methods
+    ========================*/
+    
+    // Get the basic setup
+    static basicSetup(){
+        return {
+            sequence: [ KonamiCode.keys.UP, KonamiCode.keys.UP, KonamiCode.keys.DOWN, KonamiCode.keys.DOWN, KonamiCode.keys.LEFT, KonamiCode.keys.RIGHT, KonamiCode.keys.LEFT, KonamiCode.keys.RIGHT, KonamiCode.keys.B, KonamiCode.keys.A ],
+            skin: KonamiCode.skins.SNES
+        };
+    }
+    
+    // Keys that need visual joystick
+    static needJoystick( keyCode ){
+        return [ KonamiCode.keys.A, KonamiCode.keys.B, KonamiCode.keys.X, KonamiCode.keys.Y ].indexOf( `${keyCode}` ) != -1;
+    }
+    
+    // Check if it's a mobile device
+    static isMobile( options ){
+        
+        const groups = [ /Android/i, /iPhone/i, /iPod/i, /iPad/i, /Windows Phone/i, /webOS/i, /SymbianOS/i, /RIM/i, /BB/i ];
+        const useragent = navigator.userAgent;
 
-        // Añadir al header
-        document.querySelector( "head" ).appendChild( link );
+        return groups.find( g => useragent.match( g ) )? true : false;
         
     }
     
+    // Import the CSS style inline to the code
+    static appendStyles(){
+        
+        this.htmlTemplates = {};
+        
+        // Load valid skins && html templates
+        for( const skin of Object.values( this.skins ) ){
+            
+            const link = document.createElement( "LINK" );
+            link.href = `${this.source}skins/${skin}/style.css`;
+            link.type = "text/css";
+            link.rel = "stylesheet";
+            
+            document.querySelector( "head" ).append( link );
+            
+            // HTML Template
+            fetch( `src/skins/${skin}/config.json` )
+            .then( response => response.json() )
+            .then( json => {
+                
+                this.htmlTemplates[ skin ] = json.html? json.html : '<div></div>';
+                
+            })
+            .catch( e => {
+                this.htmlTemplates[ skin ] = '<div></div>';
+            });
+            
+        }
+        
+    }
 }
 
-// Obtener URL actual del script y guardar para referenciar estilos
-KonamiCode.source_url = ( src => { src.pop(); return `${src.join("/")}/`; } )( document.currentScript.src.split("/") );
+// Keys for codes
+KonamiCode.keys = {
+    UP: "UP",
+    DOWN: "DOWN",
+    LEFT: "LEFT",
+    RIGHT: "RIGHT",
+    B: "B",
+    A: "A",
+    X: "X",
+    Y: "Y",
+};
+
+// Skins
+KonamiCode.skins = {
+    SNES: "snes",
+    SWITCH: "switch"
+};
+
+// Colors
+KonamiCode.colors = {
+    RED: "red",
+    BLUE: "blue",
+    YELLOW: "yellow",
+    GREEN: "green",
+    PINK: "pink",
+    PURPLE: "purple",
+    GRAY: "gray",
+    RAINBOW: "rainbow"
+};
+
+// KeyboardEvent
+KonamiCode.keyboardEvent = [ 'keyup', 'keydown' ];
+
+// Save current script URL
+KonamiCode.source = `${document.currentScript.src.split("/").slice(0,-1).join("/")}/`;
