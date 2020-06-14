@@ -17,7 +17,7 @@ window.addEventListener( 'load', _ => {
                             for( const k of keys ){ k.classList.remove( 'active' ); }
                         }, 1400 );
 
-                        new Audio( '/assets/sounds/zapsplat_multimedia_game_sound_soft_warm_watery_positive_tone_003_52090.mp3' ).play();
+                        new Audio( 'assets/sounds/zapsplat_multimedia_game_sound_soft_warm_watery_positive_tone_003_52090.mp3' ).play();
 
                     },
                     progress: (count, percent) => {
@@ -51,7 +51,7 @@ window.addEventListener( 'load', _ => {
                             for( const k of keys ){ k.classList.remove( 'active' ); }
                         }, 1400 );
 
-                        new Audio( '/assets/sounds/zapsplat_multimedia_game_sound_relaxed_zen_warm_positive_alert_003_52076.mp3' ).play();
+                        new Audio( 'assets/sounds/zapsplat_multimedia_game_sound_relaxed_zen_warm_positive_alert_003_52076.mp3' ).play();
 
                     },
                     progress: (count, percent) => {
@@ -86,7 +86,7 @@ window.addEventListener( 'load', _ => {
                             for( const k of keys ){ k.classList.remove( 'active' ); }
                         }, 1400 );
 
-                        new Audio( '/assets/sounds/zapsplat_multimedia_game_sound_relaxed_zen_warm_positive_alert_003_52076.mp3' ).play();
+                        new Audio( 'assets/sounds/zapsplat_multimedia_game_sound_relaxed_zen_warm_positive_alert_003_52076.mp3' ).play();
 
                     },
                     progress: (count, percent) => {
