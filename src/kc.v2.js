@@ -199,8 +199,6 @@ class KonamiCode{
     // Execute the callback
     exec( code, delayed ){
         
-        console.log( code, delayed );
-        
         if( code && code.callback ){
             
             if( delayed ){
@@ -365,7 +363,10 @@ class KonamiCode{
     // Create a Joystick
     showJoystick( setup ){
         
-        if( this.activeJoystick ) return;
+        if( this.activeJoystick ){
+            this.activeJoystick.classList.add( "show" );
+            return;
+        }
         
         // Get the skin
         const skin = setup && setup.skin? setup.skin : KonamiCode.skins.SNES;
@@ -375,10 +376,13 @@ class KonamiCode{
         this.activeJoystick = this.domParser.parseFromString( KonamiCode.htmlTemplates[ skin ], 'text/html' ).body.firstChild;
         if( color ) this.activeJoystick.dataset.skin = `${skin}-${color}`;
         
+        // Activete
+        setTimeout( _ => { this.activeJoystick.classList.add( "show" ); }, 100 );
+        
         // For removing on hide
-        this.activeJoystick.addEventListener( "animationend", e => {
+        this.activeJoystick.addEventListener( "transitionend", e => {
            
-            if( e.animationName == `${skin}-joystick-hide`){
+            if( !this.activeJoystick.classList.contains( "show" ) ){
                 this.activeJoystick.remove();
                 this.activeJoystick = null;
             }
@@ -413,9 +417,9 @@ class KonamiCode{
     // Remove the current joystick
     hideJoystick(){
         
-        if( !this.activeJoystick || this.activeJoystick.classList.contains( "hide" ) ) return;
+        if( !this.activeJoystick || !this.activeJoystick.classList.contains( "show" ) ) return;
         
-        this.activeJoystick.classList.add( "hide" );
+        this.activeJoystick.classList.remove( "show" );
         
     }
     

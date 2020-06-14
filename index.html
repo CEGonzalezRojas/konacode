@@ -18,7 +18,6 @@
                 c = new KonamiCode({
                         codes: [
                             {
-                                skin: KonamiCode.skins.SNES,
                                 callback: _ =>{
                                     
                                     document.querySelector( "[data-code=konami]" ).classList.add( "complete" );
@@ -30,8 +29,7 @@
                                         const keys = Array.from( document.querySelectorAll( "[data-code=konami] > *" ) );
                                         for( const k of keys ){ k.classList.remove( 'active' ); }
                                     }, 1400 );
-
-                                    /*document.body.append( new DOMParser().parseFromString( '<iframe id="completo" src="https://www.youtube.com/embed/wOL3XQcAgsA?autoplay=1" frameborder="0" allowfullscreen allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" style="position:fixed; top: 0; left: 0; height: 100%; width: 100%; pointer-events: none;"></iframe>', 'text/html' ).body.firstChild );*/
+                                    
 
                                 },
                                 progress: (count, percent) => {
@@ -52,7 +50,7 @@
                                 }
                             },
                             {
-                                sequence: [  KonamiCode.keys.LEFT, KonamiCode.keys.X, KonamiCode.keys.LEFT, KonamiCode.keys.RIGHT, KonamiCode.keys.Y, KonamiCode.keys.B ],
+                                sequence: [  KonamiCode.keys.LEFT, KonamiCode.keys.X, KonamiCode.keys.LEFT, KonamiCode.keys.Y, KonamiCode.keys.RIGHT, KonamiCode.keys.B ],
                                 skin: KonamiCode.skins.SWITCH,
                                 callback: exec =>{
                                     document.querySelector( "[data-code=secret]" ).classList.add( "complete" );
@@ -60,7 +58,7 @@
                                     // Reset
                                     setTimeout( _ => {
                                         completeSecretCode = false;
-                                        document.querySelector( "[data-code=konami]" ).classList.remove( "complete" );
+                                        document.querySelector( "[data-code=secret]" ).classList.remove( "complete" );
                                         const keys = Array.from( document.querySelectorAll( "[data-code=secret] > *" ) );
                                         for( const k of keys ){ k.classList.remove( 'active' ); }
                                     }, 1400 );
@@ -110,8 +108,8 @@
             <div data-key="<"></div>
             <div data-key="X"></div>
             <div data-key="<"></div>
-            <div data-key=">"></div>
             <div data-key="Y"></div>
+            <div data-key=">"></div>
             <div data-key="B"></div>
         </div>
         

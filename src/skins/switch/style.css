@@ -18,15 +18,12 @@ kcjoystick[data-skin|=switch]{
     width: 130px;
     height: 400px;
     font-family: 'Helvetica', sans-serif;
-    transform: translate(-130px,0px);
-    -webkit-animation: switch-joystick-show 0.3s ease-in-out forwards;
-    animation: switch-joystick-show 0.3s ease-in-out forwards;
+    transform: translate(-140px,0px);
+    transition: transform 0.4s 0.1s ease-in-out;
 }
 
-kcjoystick[data-skin|=switch].hide{
+kcjoystick[data-skin|=switch].show{
     transform: translate(0px,0px);
-    -webkit-animation: switch-joystick-hide 0.3s 0.4s ease-in-out forwards;
-    animation: switch-joystick-hide 0.3s 0.4s ease-in-out forwards;
 }
 
 kcjoystick[data-skin|=switch] > .right{
@@ -281,24 +278,6 @@ kcjoystick[data-skin=switch-rainbow] > .front{
     }
 }
 
-@-webkit-keyframes switch-joystick-show{
-    from{
-        transform: translate(-130px,0px);
-    }
-    to{
-        transform: translate(0px,0px);
-    }
-}
-
-@-webkit-keyframes switch-joystick-hide{
-    from{
-        transform: translate(0px,0px);
-    }
-    to{
-        transform: translate(-130px,0px);
-    }
-}
-
 @-webkit-keyframes switch-joystick-clicked{
     0%{
         font-size: 0.8em;
@@ -336,24 +315,6 @@ kcjoystick[data-skin=switch-rainbow] > .front{
     }
     100%{
         background-color: var(--switch-red);
-    }
-}
-
-@keyframes switch-joystick-show{
-    from{
-        transform: translate(-130px,0px);
-    }
-    to{
-        transform: translate(0px,0px);
-    }
-}
-
-@keyframes switch-joystick-hide{
-    from{
-        transform: translate(0px,0px);
-    }
-    to{
-        transform: translate(-130px,0px);
     }
 }
 
