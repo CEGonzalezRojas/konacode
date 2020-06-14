@@ -49,7 +49,8 @@ class KonamiCode{
         
         // For mobile support
         this.touchXStart = this.touchXEnd = this.touchYStart = this.touchYEnd = null;
-        this.touchMinMove = 10;
+        
+        this.activeJoystick = null;
         
         this.events();
     }
@@ -150,7 +151,7 @@ class KonamiCode{
         this.validCodes = this.validCodes.filter( code => code.sequence[ currentIndex ] == keyCode );
         
         if( this.validCodes.length ){
-            this.currentSequence.push( keyCode );
+            this.currentSequence.push( keyCode );    
             
             // Call to progress callback
             for( const code of this.validCodes ){
@@ -176,6 +177,16 @@ class KonamiCode{
                 }
                 
                 this.resetCurrentSequence();
+            }
+            else{
+                
+                // Check for the next key. If there is a code that need joystick, show it! (If there are more than one, it use the first skin)
+                const nextKeys = this.validCodes.filter( code => KonamiCode.needJoystick( this.transcript( code.sequence[ this.currentSequence.length ] ) ) );
+                
+                if( nextKeys.length ){
+                    this.showJoystick( nextKeys[0] );
+                }
+                
             }
             
         }
@@ -206,34 +217,42 @@ class KonamiCode{
         switch( code ){
             case "ArrowUp":
             case 38:
+            case KonamiCode.keys.UP:
                 return KonamiCode.keys.UP;
                 break;
             case "ArrowDown":
             case 40:
+            case KonamiCode.keys.DOWN:
                 return KonamiCode.keys.DOWN;
                 break;
             case "ArrowLeft":
             case 37:
+            case KonamiCode.keys.LEFT:
                 return KonamiCode.keys.LEFT;
                 break;
             case "ArrowRight":
             case 39:
+            case KonamiCode.keys.RIGHT:
                 return KonamiCode.keys.RIGHT;
                 break;
             case "KeyA":
             case 65:
+            case KonamiCode.keys.A:
                 return KonamiCode.keys.A;
                 break;
             case "KeyB":
             case 66:
+            case KonamiCode.keys.B:
                 return KonamiCode.keys.B;
                 break;
             case "KeyX":
             case 88:
+            case KonamiCode.keys.X:
                 return KonamiCode.keys.X;
                 break;
             case "KeyY":
             case 89:
+            case KonamiCode.keys.Y:
                 return KonamiCode.keys.Y;
                 break;
             default:
@@ -284,25 +303,36 @@ class KonamiCode{
         // The bigger difference is the direction ( Default vertical )
         // Check for vertical move, then horizontal. One movement allowed per "touch cycle"
         if( Math.abs( this.touchYEnd - this.touchYStart ) >= Math.abs( this.touchXEnd - this.touchXStart ) ){
-            if( this.touchYEnd + this.touchMinMove < this.touchYStart ){
+            if( this.touchYEnd < this.touchYStart ){
                 // Up
                 this.handler( { code: "ArrowUp" } );
             }
-            else if( this.touchYEnd - this.touchMinMove > this.touchYStart ){
+            else if( this.touchYEnd > this.touchYStart ){
                 // Down
                 this.handler( { code: "ArrowDown" } );
             }
         }
         else{
-            if( this.touchXEnd + this.touchMinMove < this.touchXStart ){
+            if( this.touchXEnd < this.touchXStart ){
                 // Down
                 this.handler( { code: "ArrowLeft" } );
             }
-            else if( this.touchXEnd - this.touchMinMove > this.touchXStart ){
+            else if( this.touchXEnd > this.touchXStart ){
                 // Down
                 this.handler( { code: "ArrowRight" } );
             }   
         }
+        
+    }
+    
+    // Create a Joystick
+    showJoystick( setup ){
+        
+        if( this.activeJoystick ) return;
+        
+        this.activeJoystick = this.domParser.parseFromString( KonamiCode.htmlTemplates[ setup && setup.skin? setup.skin : KonamiCode.skins.SNES ], 'text/html' ).body.firstChild;
+        
+        document.body.append( this.activeJoystick );
         
     }
     
@@ -320,7 +350,7 @@ class KonamiCode{
     
     // Keys that need visual joystick
     static needJoystick( keyCode ){
-        return [65, 66, 88, 89, "KeyA", "KeyB", "KeyX", "KeyY" ].indexOf( keyCode ) != -1;
+        return [ KonamiCode.keys.A, KonamiCode.keys.B, KonamiCode.keys.X, KonamiCode.keys.Y ].indexOf( `${keyCode}` ) != -1;
     }
     
     // Check if it's a mobile device

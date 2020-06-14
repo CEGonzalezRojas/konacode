@@ -23,11 +23,8 @@ kcjoystick[data-skin|=snes]{
     height: 300px;
     font-family: 'Helvetica', sans-serif;
     transform: translate(-301px,0px);
-    transition: transform 0.3s ease-in-out;
-}
-
-kcjoystick[data-skin|=snes].active{
-    transform: translate(0px,0px);
+    -webkit-animation: snes-joystick-show 0.3s ease-in-out forwards;
+    animation: snes-joystick-show 0.3s ease-in-out forwards;
 }
 
 kcjoystick[data-skin|=snes] > .back{
@@ -259,6 +256,15 @@ kcjoystick[data-skin|=snes] > .buttons > div[a]{
     }
 }
 
+@-webkit-keyframes snes-joystick-show {
+    from{
+        transform: translate(-301px,0px);
+    }
+    to{
+        transform: translate(0px,0px);
+    }
+}
+
 /* Standard syntax */
 @keyframes clicked {
     0%{
@@ -278,5 +284,14 @@ kcjoystick[data-skin|=snes] > .buttons > div[a]{
         border-left: 2px solid rgba(0,0,0,.2);
         border-right: 2px solid rgba(255,255,255,.2);
         box-shadow: -4px 0px 2px rgba(0,0,0,.2);
+    }
+}
+
+@keyframes snes-joystick-show {
+    from{
+        transform: translate(-301px,0px);
+    }
+    to{
+        transform: translate(0px,0px);
     }
 }
