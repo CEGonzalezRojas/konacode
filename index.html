@@ -11,6 +11,9 @@
         <script>
             
             window.addEventListener( 'load', _ => {
+                
+                let completeKonami = false;
+                
                 c = new KonamiCode({
                         codes: [
                             {
@@ -31,6 +34,8 @@
                                 },
                                 progress: (count, percent) => {
                                     
+                                    if( completeKonami ) return;
+                                    
                                     const keys = Array.from( document.querySelectorAll( ".keys > *" ) );
                                     
                                     if( count ){
@@ -38,6 +43,18 @@
                                     }
                                     else{
                                         for( const k of keys ){ k.classList.remove( 'active' ); }
+                                    }
+                                    
+                                    if( percent == 100 ){
+                                        completeKonami = true;
+                                        document.querySelector( ".keys" ).classList.add( "complete" );
+                                        
+                                        setTimeout( _ => {
+                                            completeKonami = false;
+                                            document.querySelector( ".keys" ).classList.remove( "complete" );
+                                            for( const k of keys ){ k.classList.remove( 'active' ); }
+                                        }, 1000 );
+                                        
                                     }
                                     
                                 }
@@ -61,16 +78,16 @@
     <body>
         
         <div class="keys">
-            <div>K</div>
-            <div>O</div>
-            <div>N</div>
-            <div>A</div>
-            <div>M</div>
-            <div>I</div>
-            <div>C</div>
-            <div>O</div>
-            <div>D</div>
-            <div>E</div>
+            <div data-key="K"></div>
+            <div data-key="O"></div>
+            <div data-key="N"></div>
+            <div data-key="A"></div>
+            <div data-key="M"></div>
+            <div data-key="I"></div>
+            <div data-key="C"></div>
+            <div data-key="O"></div>
+            <div data-key="D"></div>
+            <div data-key="E"></div>
         </div>
         
         <script type="application/javascript" src="src/kc.v2.js?t=4"></script>

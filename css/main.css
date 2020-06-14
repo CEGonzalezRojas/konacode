@@ -28,6 +28,7 @@ body{
 }
 
 .keys > *{
+    position: relative;
     color: var(--key-off);
     transition: color 0.2s ease-in-out;
 }
@@ -38,4 +39,42 @@ body{
 
 .keys > *:nth-child(7){
     grid-column:2;
+}
+
+.keys > *::before{
+    content: attr(data-key);
+}
+
+.keys > *::after{
+    content: attr(data-key);
+    position: absolute;
+    left: 0;
+    opacity: 0;
+}
+
+.keys.complete > *::after{
+    -webkit-animation: konamicodecomplete 0.4s ease-in-out;
+    animation: konamicodecomplete 0.4s ease-in-out;
+}
+
+@-webkit-keyframes konamicodecomplete{
+    from{
+        transform: scale(1);
+        opacity: 1;
+    }
+    to{
+        transform: scale(8);
+        opacity: 0;
+    }
+}
+
+@keyframes konamicodecomplete{
+    from{
+        transform: scale(1);
+        opacity: 1;
+    }
+    to{
+        transform: scale(8);
+        opacity: 0;
+    }
 }
