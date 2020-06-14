@@ -6,28 +6,39 @@
         <meta charset="utf-8">
         <title>SNES</title>
         
+        <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
         <link async href="css/main.css?t=22" rel="stylesheet" type="text/css">
         
         <script>
             
             window.addEventListener( 'load', _ => {
                 
-                let completeKonami = false;
+                let completeKonami = false, completeSecretCode = false;
                 
                 c = new KonamiCode({
                         codes: [
                             {
                                 skin: KonamiCode.skins.SNES,
                                 callback: _ =>{
+                                    
+                                    document.querySelector( "[data-code=konami]" ).classList.add( "complete" );
 
-                                    document.body.append( new DOMParser().parseFromString( '<iframe id="completo" src="https://www.youtube.com/embed/wOL3XQcAgsA?autoplay=1" frameborder="0" allowfullscreen allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" style="position:fixed; top: 0; left: 0; height: 100%; width: 100%; pointer-events: none;"></iframe>', 'text/html' ).body.firstChild );
+                                    // Reset
+                                    setTimeout( _ => {
+                                        completeKonami = false;
+                                        document.querySelector( "[data-code=konami]" ).classList.remove( "complete" );
+                                        const keys = Array.from( document.querySelectorAll( "[data-code=konami] > *" ) );
+                                        for( const k of keys ){ k.classList.remove( 'active' ); }
+                                    }, 1400 );
+
+                                    /*document.body.append( new DOMParser().parseFromString( '<iframe id="completo" src="https://www.youtube.com/embed/wOL3XQcAgsA?autoplay=1" frameborder="0" allowfullscreen allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" style="position:fixed; top: 0; left: 0; height: 100%; width: 100%; pointer-events: none;"></iframe>', 'text/html' ).body.firstChild );*/
 
                                 },
                                 progress: (count, percent) => {
                                     
                                     if( completeKonami ) return;
                                     
-                                    const keys = Array.from( document.querySelectorAll( ".keys > *" ) );
+                                    const keys = Array.from( document.querySelectorAll( "[data-code=konami] > *" ) );
                                     
                                     if( count ){
                                         keys[ count - 1 ].classList.add( 'active' );
@@ -36,25 +47,39 @@
                                         for( const k of keys ){ k.classList.remove( 'active' ); }
                                     }
                                     
-                                    if( percent == 100 ){
-                                        completeKonami = true;
-                                        document.querySelector( ".keys" ).classList.add( "complete" );
-                                        
-                                        setTimeout( _ => {
-                                            completeKonami = false;
-                                            document.querySelector( ".keys" ).classList.remove( "complete" );
-                                            for( const k of keys ){ k.classList.remove( 'active' ); }
-                                        }, 1000 );
-                                        
-                                    }
+                                    completeKonami = percent == 100;
                                     
                                 }
                             },
                             {
-                                sequence: [ KonamiCode.keys.UP, KonamiCode.keys.UP, KonamiCode.keys.DOWN, KonamiCode.keys.DOWN, KonamiCode.keys.LEFT, KonamiCode.keys.RIGHT, KonamiCode.keys.LEFT, KonamiCode.keys.RIGHT, KonamiCode.keys.B, KonamiCode.keys.A, KonamiCode.keys.X ],
+                                sequence: [  KonamiCode.keys.LEFT, KonamiCode.keys.X, KonamiCode.keys.LEFT, KonamiCode.keys.RIGHT, KonamiCode.keys.Y, KonamiCode.keys.B ],
                                 skin: KonamiCode.skins.SWITCH,
                                 callback: exec =>{
-                                    console.log( "i win");
+                                    document.querySelector( "[data-code=secret]" ).classList.add( "complete" );
+
+                                    // Reset
+                                    setTimeout( _ => {
+                                        completeSecretCode = false;
+                                        document.querySelector( "[data-code=konami]" ).classList.remove( "complete" );
+                                        const keys = Array.from( document.querySelectorAll( "[data-code=secret] > *" ) );
+                                        for( const k of keys ){ k.classList.remove( 'active' ); }
+                                    }, 1400 );
+                                },
+                                progress: (count, percent) => {
+                                    
+                                    if( completeSecretCode ) return;
+                                    
+                                    const keys = Array.from( document.querySelectorAll( "[data-code=secret] > *" ) );
+                                    
+                                    if( count ){
+                                        keys[ count - 1 ].classList.add( 'active' );
+                                    }
+                                    else{
+                                        for( const k of keys ){ k.classList.remove( 'active' ); }
+                                    }
+                                    
+                                    completeSecretCode = percent == 100;
+                                    
                                 }
                             }
                         ]
@@ -68,7 +93,7 @@
     </head>
     <body>
         
-        <div class="keys">
+        <div class="keys" data-code="konami">
             <div data-key="K"></div>
             <div data-key="O"></div>
             <div data-key="N"></div>
@@ -79,6 +104,15 @@
             <div data-key="O"></div>
             <div data-key="D"></div>
             <div data-key="E"></div>
+        </div>
+        
+        <div class="keys" data-code="secret">
+            <div data-key="<"></div>
+            <div data-key="X"></div>
+            <div data-key="<"></div>
+            <div data-key=">"></div>
+            <div data-key="Y"></div>
+            <div data-key="B"></div>
         </div>
         
         <script type="application/javascript" src="src/kc.v2.js?t=22"></script>

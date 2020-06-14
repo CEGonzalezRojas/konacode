@@ -1,5 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Anton&display=swap');
-
 :root{
     --body: #D9D9D9;
     --key-on: #E03616;
@@ -8,7 +6,7 @@
 
 body{
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     margin: 0px;
@@ -23,8 +21,8 @@ body{
     grid-template-columns: repeat(6,1fr);
     grid-column-gap: 20px;
     height: 100%;
-    font-family: 'Anton', sans-serif;
-    font-size: 4em;
+    font-family: 'Fredoka One', cursive;
+    font-size: 3em;
 }
 
 .keys > *{
@@ -45,36 +43,41 @@ body{
     content: attr(data-key);
 }
 
-.keys > *::after{
-    content: attr(data-key);
-    position: absolute;
-    left: 0;
-    opacity: 0;
-}
-
-.keys.complete > *::after{
+.keys.complete > *{
     -webkit-animation: konamicodecomplete 0.4s ease-in-out;
     animation: konamicodecomplete 0.4s ease-in-out;
 }
 
+.keys.complete > *:nth-child(2){ -webkit-animation-delay: .1s; animation-delay: .1s; }
+.keys.complete > *:nth-child(3){ -webkit-animation-delay: .2s; animation-delay: .2s; }
+.keys.complete > *:nth-child(4){ -webkit-animation-delay: .3s; animation-delay: .3s; }
+.keys.complete > *:nth-child(5){ -webkit-animation-delay: .3s; animation-delay: .3s; }
+.keys.complete > *:nth-child(6){ -webkit-animation-delay: .4s; animation-delay: .4s; }
+.keys.complete > *:nth-child(7){ -webkit-animation-delay: .5s; animation-delay: .5s; }
+.keys.complete > *:nth-child(8){ -webkit-animation-delay: .6s; animation-delay: .6s; }
+.keys.complete > *:nth-child(9){ -webkit-animation-delay: .7s; animation-delay: .7s; }
+.keys.complete > *:nth-child(10){ -webkit-animation-delay: .8s; animation-delay: .8s; }
+
 @-webkit-keyframes konamicodecomplete{
-    from{
-        transform: scale(1);
-        opacity: 1;
+    0{
+        transform: translateY(0px);
     }
-    to{
-        transform: scale(8);
-        opacity: 0;
+    50%{
+        transform: translateY(-20px);
+    }
+    100%{
+        transform: translateY(0px);
     }
 }
 
 @keyframes konamicodecomplete{
-    from{
-        transform: scale(1);
-        opacity: 1;
+    0{
+        transform: translateY(0px);
     }
-    to{
-        transform: scale(8);
-        opacity: 0;
+    50%{
+        transform: translateY(-20px);
+    }
+    100%{
+        transform: translateY(0px);
     }
 }
