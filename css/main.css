@@ -5,6 +5,13 @@
     --link: #568EA3;
 }
 
+html{
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
 body{
     display: flex;
     flex-direction: column;
@@ -23,7 +30,6 @@ body{
     justify-items: center;
     grid-template-columns: repeat(6,1fr);
     grid-column-gap: 20px;
-    height: 100%;
     font-size: 3em;
 }
 
