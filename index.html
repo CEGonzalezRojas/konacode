@@ -6,7 +6,7 @@
         <meta charset="utf-8">
         <title>SNES</title>
         
-        <link async href="css/main.css?t=4" rel="stylesheet" type="text/css">
+        <link async href="css/main.css?t=3" rel="stylesheet" type="text/css">
         
         <script>
             
@@ -28,6 +28,18 @@
 
                                     }
 
+                                },
+                                progress: (count, percent) => {
+                                    
+                                    const keys = Array.from( document.querySelectorAll( ".keys > *" ) );
+                                    
+                                    if( count ){
+                                        keys[ count - 1 ].classList.add( 'active' );
+                                    }
+                                    else{
+                                        for( const k of keys ){ k.classList.remove( 'active' ); }
+                                    }
+                                    
                                 }
                             },
                             {
@@ -49,16 +61,16 @@
     <body>
         
         <div class="keys">
-            <div>⬆️</div>
-            <div>⬆️</div>
-            <div>⬇️</div>
-            <div>⬇️</div>
-            <div>⬅️</div>
-            <div>➡️</div>
-            <div>⬅️</div>
-            <div>➡️</div>
-            <div>🅱️</div>
-            <div>🅰️</div>
+            <div>K</div>
+            <div>O</div>
+            <div>N</div>
+            <div>A</div>
+            <div>M</div>
+            <div>I</div>
+            <div>C</div>
+            <div>O</div>
+            <div>D</div>
+            <div>E</div>
         </div>
         
         <script type="application/javascript" src="src/kc.v2.js?t=4"></script>

@@ -1,18 +1,41 @@
-body{
-    margin: 0px;
-    background-color: #222;
-    overscroll-behavior-y: contain;
+@import url('https://fonts.googleapis.com/css2?family=Anton&display=swap');
+
+:root{
+    --body: #D9D9D9;
+    --key-on: #E03616;
+    --key-off: #7A7A7A;
 }
 
-.keys{
+body{
     display: flex;
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    height: 100%;
-    font-size: 2em;
+    margin: 0px;
+    overscroll-behavior-y: contain;
+    user-select: none;
+    background-color: var(--body);
 }
 
-.keys > *:not(:last-child){
-    margin-right: 10px;
+.keys{
+    display: grid;
+    justify-items: center;
+    grid-template-columns: repeat(6,1fr);
+    grid-column-gap: 20px;
+    height: 100%;
+    font-family: 'Anton', sans-serif;
+    font-size: 4em;
+}
+
+.keys > *{
+    color: var(--key-off);
+    transition: color 0.2s ease-in-out;
+}
+
+.keys > *.active{
+    color: var(--key-on);
+}
+
+.keys > *:nth-child(7){
+    grid-column:2;
 }

@@ -150,7 +150,15 @@ class KonamiCode{
         
         if( this.validCodes.length ){
             this.currentSequence.push( keyCode );
-            console.log( this.currentSequence );
+            
+            // Call to progress callback
+            for( const code of this.validCodes ){
+                
+                if( code.progress && typeof code.progress == 'function' ){
+                    code.progress( this.currentSequence.length , Math.floor( this.currentSequence.length / code.sequence.length * 100 ) );
+                }
+                
+            }
             
             // Sequence finish?
             const sequenceFinish = this.validCodes.filter( code => code.sequence.length == this.currentSequence.length );
@@ -159,8 +167,8 @@ class KonamiCode{
                 
                 // If only one, execute and reset
                 if( sequenceFinish.length == 1 ){
-                    //this.exex( sequenceFinish[0] );
-                    this.resetCurrentSequence();
+                    //this.exec( sequenceFinish[0] );
+                    
                 }
                 else{
                     
@@ -177,6 +185,16 @@ class KonamiCode{
     
     // Clean the sequence
     resetCurrentSequence(){
+        
+        // Reset progress
+        for( const code of this.codes ){
+                
+            if( code.progress && typeof code.progress == 'function' ){
+                code.progress( 0, 0 );
+            }
+
+        }
+        
         this.currentSequence.length = 0;
         delete this.validCodes;   
     }
