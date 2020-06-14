@@ -49,6 +49,7 @@ class KonamiCode{
         
         // For mobile support
         this.touchXStart = this.touchXEnd = this.touchYStart = this.touchYEnd = null;
+        this.touchMinMovement = 15;
         
         this.activeJoystick = null;
         
@@ -186,6 +187,9 @@ class KonamiCode{
                 if( nextKeys.length ){
                     this.showJoystick( nextKeys[0] );
                 }
+                else{
+                    this.hideJoystick();
+                }
                 
             }
             
@@ -206,6 +210,8 @@ class KonamiCode{
             }
 
         }
+        
+        this.hideJoystick();
         
         this.currentSequence.length = 0;
         delete this.validCodes;   
@@ -303,21 +309,21 @@ class KonamiCode{
         // The bigger difference is the direction ( Default vertical )
         // Check for vertical move, then horizontal. One movement allowed per "touch cycle"
         if( Math.abs( this.touchYEnd - this.touchYStart ) >= Math.abs( this.touchXEnd - this.touchXStart ) ){
-            if( this.touchYEnd < this.touchYStart ){
+            if( this.touchYEnd + this.touchMinMovement < this.touchYStart ){
                 // Up
                 this.handler( { code: "ArrowUp" } );
             }
-            else if( this.touchYEnd > this.touchYStart ){
+            else if( this.touchYEnd - this.touchMinMovement > this.touchYStart ){
                 // Down
                 this.handler( { code: "ArrowDown" } );
             }
         }
         else{
-            if( this.touchXEnd < this.touchXStart ){
+            if( this.touchXEnd + this.touchMinMovement < this.touchXStart ){
                 // Down
                 this.handler( { code: "ArrowLeft" } );
             }
-            else if( this.touchXEnd > this.touchXStart ){
+            else if( this.touchXEnd - this.touchMinMovement > this.touchXStart ){
                 // Down
                 this.handler( { code: "ArrowRight" } );
             }   
@@ -330,9 +336,42 @@ class KonamiCode{
         
         if( this.activeJoystick ) return;
         
-        this.activeJoystick = this.domParser.parseFromString( KonamiCode.htmlTemplates[ setup && setup.skin? setup.skin : KonamiCode.skins.SNES ], 'text/html' ).body.firstChild;
+        // Get the skin
+        const skin = setup && setup.skin? setup.skin : KonamiCode.skins.SNES;
+        
+        // Create the html element, assign events and append to the body
+        this.activeJoystick = this.domParser.parseFromString( KonamiCode.htmlTemplates[ skin ], 'text/html' ).body.firstChild;
+        
+        // For removing on hide
+        this.activeJoystick.addEventListener( "animationend", e => {
+           
+            if( e.animationName == `${skin}-joystick-hide`){
+                this.activeJoystick.remove();
+                this.activeJoystick = null;
+            }
+            
+        });
+        
+        // Keys ( A, B, C, D )
+        for( const key of [ 'a', 'b', 'x', 'y' ] ){
+            const element = this.activeJoystick.querySelector( `[${key}]` );
+            if( element ){
+                
+                element.addEventListener( "click", _ => { this.handler( { code: `Key${key.toUpperCase()}` } ) } );
+                
+            }
+        }
         
         document.body.append( this.activeJoystick );
+        
+    }
+    
+    // Remove the current joystick
+    hideJoystick(){
+        
+        if( !this.activeJoystick || this.activeJoystick.classList.contains( "hide" ) ) return;
+        
+        this.activeJoystick.classList.add( "hide" );
         
     }
     

@@ -27,6 +27,11 @@ kcjoystick[data-skin|=snes]{
     animation: snes-joystick-show 0.3s ease-in-out forwards;
 }
 
+kcjoystick[data-skin|=snes].hide{
+    -webkit-animation: snes-joystick-hide 0.3s ease-in-out forwards;
+    animation: snes-joystick-hide 0.3s ease-in-out forwards;
+}
+
 kcjoystick[data-skin|=snes] > .back{
     position: absolute;
     top: 28px;
@@ -235,7 +240,7 @@ kcjoystick[data-skin|=snes] > .buttons > div[a]{
 }   
 
 /* Safari 4.0 - 8.0 */
-@-webkit-keyframes clicked {
+@-webkit-keyframes clicked{
     0%{
         width: 36px;
         border-left: 2px solid rgba(0,0,0,.2);
@@ -256,17 +261,26 @@ kcjoystick[data-skin|=snes] > .buttons > div[a]{
     }
 }
 
-@-webkit-keyframes snes-joystick-show {
+@-webkit-keyframes snes-joystick-show{
     from{
         transform: translate(-301px,0px);
     }
     to{
         transform: translate(0px,0px);
+    }
+}
+
+@-webkit-keyframes snes-joystick-hide{
+    from{
+        transform: translate(0px,0px);
+    }
+    to{
+        transform: translate(-301px,0px);
     }
 }
 
 /* Standard syntax */
-@keyframes clicked {
+@keyframes clicked{
     0%{
         width: 36px;
         border-left: 2px solid rgba(0,0,0,.2);
@@ -287,11 +301,20 @@ kcjoystick[data-skin|=snes] > .buttons > div[a]{
     }
 }
 
-@keyframes snes-joystick-show {
+@keyframes snes-joystick-show{
     from{
         transform: translate(-301px,0px);
     }
     to{
         transform: translate(0px,0px);
+    }
+}
+
+@keyframes snes-joystick-hide{
+    from{
+        transform: translate(0px,0px);
+    }
+    to{
+        transform: translate(-301px,0px);
     }
 }
