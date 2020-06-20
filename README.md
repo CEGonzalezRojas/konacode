@@ -9,13 +9,13 @@ Features:
 
 # How to use
 First, include the kc.js or kc.min.js to your page:
-```
+```html
 <script type="application/javascript" src="src/kc.js"></script>
 <script type="application/javascript" src="src/kc.min.js"></script>
 ```
 
 Now, register your sequences:
-```
+```js
 …
 const c = new KonaCode({
             codes: [
