@@ -472,6 +472,7 @@ class KonaCode{
         
     }
     
+    // Display new key
     appendToFeedback( key ){
 
         if( !this.feedbackEnable ) return;
@@ -519,6 +520,7 @@ class KonaCode{
         
     }
     
+    // Hide all the keys on the feedback
     hideFromFeedback(){
         
         if( !this.feedbackEnable ) return;
