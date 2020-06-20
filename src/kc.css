@@ -1,285 +1,106 @@
 /* Similar font */
-@import url('https://fonts.googleapis.com/css?family=Teko&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap');
 
 :root{
-    --gray: #C8C8C8;
-    --gray-2: #444444;
-    --gray-3: #a5a5a5;
-    --gray-4: #3a3a3a;
-    --gray-5: #73787c;
-    --button-y: #0f7136;
-    --button-x: #072170;
-    --button-b: #f0ba39;
-    --button-a: #c9241e;
+    --feedback-color: #ffffff;
+    --feedback-bg-color-main: #ffffff;
+    --feedback-bg-color-second: #ffffff;
 }
 
-/* SNES */
-.snes{
-    display: flex;
+.konafeed{
     position: fixed;
-    top: calc( 50% - 150px );
-    left: 0px;
-    width: 301px;
-    height: 300px;
-    background-size: contain;
-    font-family: 'Helvetica', sans-serif;
-    transform: translate(-301px,0px);
-    transition: transform 0.3s ease-in-out;
-}
-
-.snes.active{
-    transform: translate(0px,0px);
-}
-
-.snes > .back{
-    position: absolute;
-    top: 28px;
-    width: 240px;
-    height: 211px;
-    border-radius: 0px 73px 74px 0px;
-    background-color: var(--gray);
-    box-shadow: 0px 10px 10px rgba(0,0,0,.5);
-    border-bottom: 2px solid rgba(0,0,0,.6);
-}
-
-.snes > .front{
-    position: absolute;
-    top: 28px;
-    left: 54px;
-    width: 240px;
-    height: 240px;
-    border-radius: 211px;
-    background-color: var(--gray);
-    box-shadow: 5px 10px 10px rgba(0,0,0,.5);
-    border-bottom: 2px solid rgba(0,0,0,.6);
-    border-left: 0px solid transparent;
-    border-right: 1px solid rgba(0,0,0,.6);
-}
-
-.snes > .patch{
-    position: absolute;
-    top: 28px;
-    width: 95px;
-    height: 211px;
-    background-color: var(--gray);
-    color: var(--gray-2);
-    font-weight: 600;
-    font-style: italic;
-}
-
-.snes > .patch > [n]::before{
-    display: flex;
-    content: 'NTENDO';
-    position: absolute;
-    top: 15px;
-    left: -12px;
-    font-size: 32px;
-    font-family: 'Teko', sans-serif;
-}
-
-.snes > .patch > [s]::before{
-    display: flex;
-    content: 'ENT SYSTEM';
-    position: absolute;
-    top: 50px;
-    left: -6px;
-    font-size: 8px;
-    background-color: var(--gray-2);
-    color: var(--gray);
-    line-height: 8px;
-    padding: 4px 1px 3px 0px;
-    letter-spacing: 4px;
-    font-family: 'Teko', sans-serif;
-}
-
-.snes > .patch > [st]{
-    position: absolute;
-    bottom: 62px;
-    left: -13px;
-    width: 45px;
-    height: 18px;
-    border-radius: 40px;
-    margin-left: 5px;
-    color: var(--gray-4);
-    background-color: var(--gray-4);
-    font-weight: 600;
-    box-shadow: -4px 0px 2px rgba(0,0,0,.2);
-    border-left: 2px solid rgba(0,0,0,.2);
-    border-right: 2px solid rgba(255,255,255,.2);
-    transform: rotate(-40deg);
-    font-family: 'Helvetica', sans-serif;
-}
-
-.snes > .patch > [st]::before{
-    position: absolute;
-    content: 'START';
-    transform: rotate(40deg);
-    font-size: 10px;
-    letter-spacing: 2px;
-    top: 20px;
-    left: -20px;
-}
-
-.snes > .right{
-    position: absolute;
-    top: 23px;
-    left: 115px;
-    width: 75px;
-    height: 5px;
-    background-color: var(--gray-3);
-    border-radius: 5px 2px 0px 0px;
-}
-
-.snes > .right.d{
-    position: absolute;
-    top: 23px;
-    left: 151px;
-    width: 75px;
-    height: 59px;
-    background-color: var(--gray-3);
-    border-radius: 37px 37px 0px 0px;
-}
-
-.snes > .circle{
-    position: absolute;
-    top: 28px;
-    left: 54px;
-    width: 240px;
-    height: 240px;
-    border-radius: 211px;
-    background-color: var(--gray-5);
-    transform: scale(.9);
-    border: 1px solid rgba(0,0,0,.1);
-}
-
-.snes > .buttons{
+    bottom: 0px;
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
-    position: absolute;
-    top: 99px;
-    left: 91px;
-    width: 120px;
-    height: 50px;
-    border-radius: 61px;
-    background-color: var(--gray);
-    transform: rotate(-40deg);
+    font-family: 'Fredoka One', cursive;
+    width: 100%;
+    padding: 10px;
+    z-index: 9999;
+    pointer-events: none;
 }
 
-.snes > .buttons.down{
-    top: 149px;
-    left: 141px;
+.konafeed > div{
+    width: 24px;
+    height: 24px;
+    color: var(--feedback-color);
+    -webkit-animation: konafeed-key-appear 0.2s ease-in-out;
+    animation: konafeed-key-appear 0.2s ease-in-out;
 }
 
-.snes > .buttons::before{
-    position: absolute;
-    content: 'Y';
+.konafeed > div.hide{
+    -webkit-animation: konafeed-key-disappear 0.2s 0.2s ease-in-out;
+    animation: konafeed-key-disappear 0.2s 0.2s ease-in-out;
+}
+
+.konafeed > div:not(:first-child){
+    margin-left: 4px;
+}
+
+.konafeed > div::before{
+    content: attr(data-key);
     display: flex;
-    transform: rotate(40deg) translate(-14px,15px);
-    color: var(--gray);
-    font-weight: 600;
+    justify-content: center;
+    align-items: center;
+    min-width: 20px;
+    min-height: 20px;
+    border: 2px solid var(--feedback-color);
+    border-radius: 20px;
+    box-shadow: 0px 0px 10px rgba(0,0,0,.4);
+    text-shadow: 0px 0px 10px rgba(0,0,0,.4);
+    font-size: 0.7em;
 }
 
-.snes > .buttons.down::before{
-    content: 'B';
-}
-
-
-.snes > .buttons::after{
-    position: absolute;
-    content: 'X';
-    display: flex;
-    transform: rotate(40deg) translate(101px,-83px);
-    color: var(--gray);
-    font-weight: 600;
-}
-
-.snes > .buttons.down::after{
-    content: 'A';
-}
-
-.snes > .buttons > div{
-    width: 36px;
-    height: 40px;
-    border-radius: 40px;
-    margin-left: 5px;
-    box-shadow: -4px 0px 2px rgba(0,0,0,.2);
-    border-left: 2px solid rgba(0,0,0,.2);
-    border-right: 2px solid rgba(255,255,255,.2);
-    cursor: pointer;
-    -webkit-tap-highlight-color: rgba(0,0,0,0);
-    -webkit-tap-highlight-color: transparent;
-    /*transition: width 0.2s ease-in-out, box-shadow 0.2s ease-in-out,
-        border-left-width 0.2s ease-in-out, border-right-width 0.2s ease-in-out;*/
-}
-
-.snes > .buttons > div[clicked]{
-    -webkit-animation: clicked 0.4s 1;
-    animation: clicked 0.4s 1;
-}
-
-.snes > .buttons > div:nth-child(2){
-    margin-left: 0px;
-    margin-right: 5px;
-}
-
-.snes > .buttons > div[y]{
-    background-color: var(--button-y);
-}
-
-.snes > .buttons > div[x]{
-    background-color: var(--button-x);
-}
-
-.snes > .buttons > div[b]{
-    background-color: var(--button-b);
-}
-
-.snes > .buttons > div[a]{
-    background-color: var(--button-a);
-}   
-
-/* Safari 4.0 - 8.0 */
-@-webkit-keyframes clicked {
+/* Animations */
+@-webkit-keyframes konafeed-key-appear{
     0%{
-        width: 36px;
-        border-left: 2px solid rgba(0,0,0,.2);
-        border-right: 2px solid rgba(255,255,255,.2);
-        box-shadow: -4px 0px 2px rgba(0,0,0,.2);
-    }
-    50%{
-        width: 40px;
-        border-left-width: 0px;
-        border-right-width: 0px;
-        box-shadow: none;
+        max-width: 0px;
+        transform: translateY(20px);
+        opacity: 0;
     }
     100%{
-        width: 36px;
-        border-left: 2px solid rgba(0,0,0,.2);
-        border-right: 2px solid rgba(255,255,255,.2);
-        box-shadow: -4px 0px 2px rgba(0,0,0,.2);
+        max-width: 20px;
+        transform: translateY(0px);
+        opacity: 1;
     }
 }
 
-/* Standard syntax */
-@keyframes clicked {
+@keyframes konafeed-key-appear {
     0%{
-        width: 36px;
-        border-left: 2px solid rgba(0,0,0,.2);
-        border-right: 2px solid rgba(255,255,255,.2);
-        box-shadow: -4px 0px 2px rgba(0,0,0,.2);
-    }
-    50%{
-        width: 40px;
-        border-left-width: 0px;
-        border-right-width: 0px;
-        box-shadow: none;
+        max-width: 0px;
+        transform: translateY(24px);
+        opacity: 0;
     }
     100%{
-        width: 36px;
-        border-left: 2px solid rgba(0,0,0,.2);
-        border-right: 2px solid rgba(255,255,255,.2);
-        box-shadow: -4px 0px 2px rgba(0,0,0,.2);
+        max-width: 24px;
+        transform: translateY(0px);
+        opacity: 1;
+    }
+}
+
+@-webkit-keyframes konafeed-key-disappear{
+    0%{
+        max-width: 20px;
+        transform: translateY(0px);
+        opacity: 1;
+    }
+    100%{
+        max-width: 0px;
+        transform: translateY(20px);
+        opacity: 0;
+    }
+}
+
+@keyframes konafeed-key-disappear {
+    0%{
+        max-width: 24px;
+        transform: translateY(0px);
+        opacity: 1;
+    }
+    100%{
+        max-width: 0px;
+        transform: translateY(24px);
+        opacity: 0;
     }
 }

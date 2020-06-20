@@ -2,7 +2,7 @@ window.addEventListener( 'load', _ => {
                 
     let completeKonami = false, completeSecretCode = completeSweetSecretCode = false;
 
-    c = new KonamiCode({
+    c = new KonaCode({
             codes: [
                 {
                     callback: _ =>{
@@ -38,8 +38,8 @@ window.addEventListener( 'load', _ => {
                     }
                 },
                 {
-                    sequence: [  KonamiCode.keys.LEFT, KonamiCode.keys.X, KonamiCode.keys.Y, KonamiCode.keys.RIGHT, KonamiCode.keys.RIGHT, KonamiCode.keys.B ],
-                    skin: KonamiCode.skins.SWITCH,
+                    sequence: [  KonaCode.keys.LEFT, KonaCode.keys.X, KonaCode.keys.Y, KonaCode.keys.RIGHT, KonaCode.keys.RIGHT, KonaCode.keys.B ],
+                    skin: KonaCode.skins.SWITCH,
                     callback: exec =>{
                         document.querySelector( "[data-code=secret]" ).classList.add( "complete" );
 
@@ -72,9 +72,9 @@ window.addEventListener( 'load', _ => {
                     }
                 },
                 {
-                    sequence: [  KonamiCode.keys.LEFT, KonamiCode.keys.RIGHT, KonamiCode.keys.X, KonamiCode.keys.X, KonamiCode.keys.Y, KonamiCode.keys.Y ],
-                    skin: KonamiCode.skins.SWITCH,
-                    color: KonamiCode.colors.BLUE,
+                    sequence: [  KonaCode.keys.LEFT, KonaCode.keys.RIGHT, KonaCode.keys.X, KonaCode.keys.X, KonaCode.keys.Y, KonaCode.keys.Y ],
+                    skin: KonaCode.skins.SWITCH,
+                    color: KonaCode.colors.BLUE,
                     callback: exec =>{
                         document.querySelector( "[data-code=sweet-secret]" ).classList.add( "complete" );
 

@@ -1,34 +1,37 @@
 /* 
-KonamiCodeJS
+KonaCodeJS
 Author: Claudio Esteban Gonzalez Rojas @cegonzalezrojas
 
-JS Implementation of the classic code. Features:
+Inspired by Konami Code
+Add secrets code to yout project. Features:
 1. Support for desktop and mobile
-2. Support for the original Konami Code sequence
+2. Support for the original Konami Code sequence (Default sequence)
 3. You can make your own custom sequences
 4. Skins for customize the experience
 5. Sequences should start with UP, DOWN, LEFT or RIGHT
 */
-class KonamiCode{
+class KonaCode{
     
     /* Setup is an object with like:
     {
         codes: [    // Array of Objects.
             {
-                sequence: [ KonamiCode.keys.UP, KonamiCode.keys.UP, ... ],    // Array with sequence. Allowed 'keys' values are in KonamiCode.keys. You can also use the values ( "UP", "DOWN", … ). 3 keys minimun
+                sequence: [ KonaCode.keys.UP, KonaCode.keys.UP, ... ],    // Array with sequence. Allowed 'keys' values are in KonaCode.keys. You can also use the values ( "UP", "DOWN", … ). 3 keys minimun
                 then: _ => { ... }  // Function to be called when the sequence is complete,
-                skin: KonamiCode.skins.SKIN // Skin for the joystick.
-                color: KonamiCode.colors.COLOR  // Some skins have color variations
+                skin: KonaCode.skins.SKIN // Skin for the joystick.
+                color: KonaCode.colors.COLOR  // Some skins have color variations
             },
             –
         ],
-        event: 'keyup' // String that indicate the keyboard event to handler ( keyup || keydown )
+        event: 'keyup' // String that indicate the keyboard event to handler ( keyup || keydown ),
+        joystickEnable: true  // Select if you want to show the joystick when a key is required ( A,B,X,Y ),
+        feedback: false  // Show feedback on screen
     }
     */
     constructor( setup ){
         
         // Only one instance per machine
-        if( KonamiCode.n_n ) throw new Error( 'Only one instance of KC allowed' );
+        if( KonaCode.n_n ) throw new Error( 'Only one instance of KC allowed' );
         
         this.register( setup.codes );
         
@@ -36,18 +39,25 @@ class KonamiCode{
         if( !this.codes.length ) throw new Error( 'You have to define at least 1 valid code' );
     
         // Saving reference
-        KonamiCode.n_n = this;
+        KonaCode.n_n = this;
         this.currentSequence = [];
         this.delayedDelta = 500;
         
         this.domParser = new DOMParser();
-        KonamiCode.appendStyles();
+        KonaCode.appendStyles();
         
         // Check event for handler keys
-        if( !setup.event || ( setup.event && KonamiCode.keyboardEvent.indexOf( setup.event ) == -1 ) ){
+        if( !setup.event || ( setup.event && KonaCode.keyboardEvent.indexOf( setup.event ) == -1 ) ){
             setup.event = 'keyup';
         }
         this.keyboardEvent = 'keyup';
+        
+        this.joystickEnable = setup.joystickEnable !== undefined? setup.joystickEnable : true;
+        this.feedbackEnable = setup.feedback !== undefined? setup.feedback : true;
+        
+        if( this.feedbackEnable ){
+            this.prepareFeedback();
+        }
         
         // For mobile support
         this.touchXStart = this.touchXEnd = this.touchYStart = this.touchYEnd = null;
@@ -68,7 +78,7 @@ class KonamiCode{
             codes = [ codes ];
         }
         
-        const basicSetup = KonamiCode.basicSetup();
+        const basicSetup = KonaCode.basicSetup();
         if( !this.codes) this.codes = [];
         
         for( const code of codes ){
@@ -81,9 +91,9 @@ class KonamiCode{
                 code.sequence = code.sequence.map( k => k.toUpperCase ? k.toUpperCase() : k  );
                 
                 // Check if start with UP, DOWN, LEFT, RIGHT
-                if( [ KonamiCode.keys.UP, KonamiCode.keys.DOWN, KonamiCode.keys.LEFT, KonamiCode.keys.RIGHT ].indexOf( code.sequence[0] ) == -1 ) continue;
+                if( [ KonaCode.keys.UP, KonaCode.keys.DOWN, KonaCode.keys.LEFT, KonaCode.keys.RIGHT ].indexOf( code.sequence[0] ) == -1 ) continue;
                 
-                const keysValues = Object.values( KonamiCode.keys );
+                const keysValues = Object.values( KonaCode.keys );
                 if( code.sequence.join() != code.sequence.filter( key => keysValues.indexOf( key ) != -1 ).join() ){
                     continue;
                 }
@@ -94,12 +104,12 @@ class KonamiCode{
             }
             
             // Check skin
-            if( code.skin && ( typeof code.skin != "string" || Object.values( KonamiCode.skins ).indexOf( code.skin ) == -1 ) ){
+            if( code.skin && ( typeof code.skin != "string" || Object.values( KonaCode.skins ).indexOf( code.skin ) == -1 ) ){
                 code.skin = basicSetup.skin;
             }
             
             // Check color
-            if( code.color && ( typeof code.color != "string" || Object.values( KonamiCode.colors ).indexOf( code.color ) == -1 ) ){
+            if( code.color && ( typeof code.color != "string" || Object.values( KonaCode.colors ).indexOf( code.color ) == -1 ) ){
                 delete code.color;
             }
             
@@ -118,7 +128,7 @@ class KonamiCode{
     // Set handler for both desktop & mobile
     events(){
         
-        if( KonamiCode.isMobile() ){
+        if( KonaCode.isMobile() ){
             
             if( "ontouchstart" in window ){
                 // Touch events
@@ -145,7 +155,7 @@ class KonamiCode{
         
         this.cleanExecTimeout();
         
-        if( !KonamiCode.n_n || ( !e.code && !e.keyCode ) ) return;
+        if( !KonaCode.n_n || ( !e.code && !e.keyCode ) ) return;
         
         const keyCode = this.transcript( e.code || e.keyCode );
         
@@ -159,7 +169,9 @@ class KonamiCode{
         
         if( this.validCodes.length ){
             
-            this.currentSequence.push( keyCode );    
+            this.currentSequence.push( keyCode );  
+            
+            this.appendToFeedback( keyCode );
             
             // Call to progress callback
             for( const code of this.validCodes ){
@@ -190,7 +202,7 @@ class KonamiCode{
             else{
                 
                 // Check for the next key. If there is a code that need joystick, show it! (If there are more than one, it use the first skin)
-                const nextKeys = this.validCodes.filter( code => KonamiCode.needJoystick( this.transcript( code.sequence[ this.currentSequence.length ] ) ) );
+                const nextKeys = this.validCodes.filter( code => KonaCode.needJoystick( this.transcript( code.sequence[ this.currentSequence.length ] ) ) );
                 
                 if( nextKeys.length ){
                     this.showJoystick( nextKeys[0] );
@@ -203,6 +215,7 @@ class KonamiCode{
             
         }
         else{
+            this.hideFromFeedback();
             this.resetCurrentSequence();
         }
     }
@@ -222,6 +235,7 @@ class KonamiCode{
                 
                 if( typeof code.callback == 'function' ) code.callback();
                 
+                this.hideFromFeedback();
                 this.resetCurrentSequence();
             }
             
@@ -263,43 +277,43 @@ class KonamiCode{
         switch( code ){
             case "ArrowUp":
             case 38:
-            case KonamiCode.keys.UP:
-                return KonamiCode.keys.UP;
+            case KonaCode.keys.UP:
+                return KonaCode.keys.UP;
                 break;
             case "ArrowDown":
             case 40:
-            case KonamiCode.keys.DOWN:
-                return KonamiCode.keys.DOWN;
+            case KonaCode.keys.DOWN:
+                return KonaCode.keys.DOWN;
                 break;
             case "ArrowLeft":
             case 37:
-            case KonamiCode.keys.LEFT:
-                return KonamiCode.keys.LEFT;
+            case KonaCode.keys.LEFT:
+                return KonaCode.keys.LEFT;
                 break;
             case "ArrowRight":
             case 39:
-            case KonamiCode.keys.RIGHT:
-                return KonamiCode.keys.RIGHT;
+            case KonaCode.keys.RIGHT:
+                return KonaCode.keys.RIGHT;
                 break;
             case "KeyA":
             case 65:
-            case KonamiCode.keys.A:
-                return KonamiCode.keys.A;
+            case KonaCode.keys.A:
+                return KonaCode.keys.A;
                 break;
             case "KeyB":
             case 66:
-            case KonamiCode.keys.B:
-                return KonamiCode.keys.B;
+            case KonaCode.keys.B:
+                return KonaCode.keys.B;
                 break;
             case "KeyX":
             case 88:
-            case KonamiCode.keys.X:
-                return KonamiCode.keys.X;
+            case KonaCode.keys.X:
+                return KonaCode.keys.X;
                 break;
             case "KeyY":
             case 89:
-            case KonamiCode.keys.Y:
-                return KonamiCode.keys.Y;
+            case KonaCode.keys.Y:
+                return KonaCode.keys.Y;
                 break;
             default:
                 return -1;
@@ -374,6 +388,8 @@ class KonamiCode{
     // Create a Joystick
     showJoystick( setup ){
         
+        if( !this.joystickEnable ) return;
+        
         if( this.activeJoystick ){
             
             if( this.currentSequence.length ){
@@ -391,11 +407,11 @@ class KonamiCode{
         }
         
         // Get the skin
-        const skin = setup && setup.skin? setup.skin : KonamiCode.skins.SNES;
+        const skin = setup && setup.skin? setup.skin : KonaCode.skins.SNES;
         const color = setup && setup.color? setup.color : null;
         
         // Create the html element, assign events and append to the body
-        this.activeJoystick = this.domParser.parseFromString( KonamiCode.htmlTemplates[ skin ], 'text/html' ).body.firstChild;
+        this.activeJoystick = this.domParser.parseFromString( KonaCode.htmlTemplates[ skin ], 'text/html' ).body.firstChild;
         if( color ) this.activeJoystick.dataset.skin = `${skin}-${color}`;
         
         // Activete
@@ -445,6 +461,75 @@ class KonamiCode{
         
     }
     
+    // Feedback
+    prepareFeedback(){
+        
+        if( !this.feedbackElement ){
+            this.feedbackElement = this.domParser.parseFromString( '<div class="konafeed"></div>', 'text/html' ).body.firstChild;
+        }
+        
+        document.body.append( this.feedbackElement );
+        
+    }
+    
+    appendToFeedback( key ){
+
+        if( !this.feedbackEnable ) return;
+        
+        let char = '';
+        
+        switch( key ){
+            case KonaCode.keys.UP:
+                char = '▲';
+                break;
+            case KonaCode.keys.DOWN:
+                char = '▼';
+                break;
+            case KonaCode.keys.LEFT:
+                char = '◀︎';
+                break;
+            case KonaCode.keys.RIGHT:
+                char = '▶︎';
+                break;
+            case KonaCode.keys.A:
+                char = 'A';
+                break;
+            case KonaCode.keys.B:
+                char = 'B';
+                break;
+            case KonaCode.keys.X:
+                char = 'X';
+                break;
+            case KonaCode.keys.Y:
+                char = 'Y';
+                break;
+        }
+        
+        const keyElement = this.domParser.parseFromString( `<div data-key="${char}"></div>`, 'text/html' ).body.firstChild;
+        
+        keyElement.addEventListener( 'animationend', e =>{
+            
+            if( e.animationName == 'konafeed-key-disappear' ){
+                keyElement.remove();
+            }
+            
+        });
+        
+        this.feedbackElement.append( keyElement );
+        
+    }
+    
+    hideFromFeedback(){
+        
+        if( !this.feedbackEnable ) return;
+        
+        const childs = Array.from( this.feedbackElement.children );
+        for( const [i,c] of childs.entries() ){
+            c.classList.add( 'hide');
+        }
+        
+    }
+    
     /*========================
         Class Methods
     ========================*/
@@ -452,14 +537,14 @@ class KonamiCode{
     // Get the basic setup
     static basicSetup(){
         return {
-            sequence: [ KonamiCode.keys.UP, KonamiCode.keys.UP, KonamiCode.keys.DOWN, KonamiCode.keys.DOWN, KonamiCode.keys.LEFT, KonamiCode.keys.RIGHT, KonamiCode.keys.LEFT, KonamiCode.keys.RIGHT, KonamiCode.keys.B, KonamiCode.keys.A ],
-            skin: KonamiCode.skins.SNES
+            sequence: [ KonaCode.keys.UP, KonaCode.keys.UP, KonaCode.keys.DOWN, KonaCode.keys.DOWN, KonaCode.keys.LEFT, KonaCode.keys.RIGHT, KonaCode.keys.LEFT, KonaCode.keys.RIGHT, KonaCode.keys.B, KonaCode.keys.A ],
+            skin: KonaCode.skins.SNES
         };
     }
     
     // Keys that need visual joystick
     static needJoystick( keyCode ){
-        return [ KonamiCode.keys.A, KonamiCode.keys.B, KonamiCode.keys.X, KonamiCode.keys.Y ].indexOf( `${keyCode}` ) != -1;
+        return [ KonaCode.keys.A, KonaCode.keys.B, KonaCode.keys.X, KonaCode.keys.Y ].indexOf( `${keyCode}` ) != -1;
     }
     
     // Check if it's a mobile device
@@ -474,6 +559,13 @@ class KonamiCode{
     
     // Import the CSS style inline to the code
     static appendStyles(){
+        
+        // Main style
+        const konastyle = document.createElement( "LINK" );
+        konastyle.href = `${this.source}kc.css`;
+        konastyle.type = "text/css";
+        konastyle.rel = "stylesheet";
+        document.querySelector( "head" ).append( konastyle );
         
         this.htmlTemplates = {};
         
@@ -505,7 +597,7 @@ class KonamiCode{
 }
 
 // Keys for codes
-KonamiCode.keys = {
+KonaCode.keys = {
     UP: "UP",
     DOWN: "DOWN",
     LEFT: "LEFT",
@@ -517,13 +609,13 @@ KonamiCode.keys = {
 };
 
 // Skins
-KonamiCode.skins = {
+KonaCode.skins = {
     SNES: "snes",
     SWITCH: "switch"
 };
 
 // Colors
-KonamiCode.colors = {
+KonaCode.colors = {
     RED: "red",
     BLUE: "blue",
     YELLOW: "yellow",
@@ -535,7 +627,7 @@ KonamiCode.colors = {
 };
 
 // KeyboardEvent
-KonamiCode.keyboardEvent = [ 'keyup', 'keydown' ];
+KonaCode.keyboardEvent = [ 'keyup', 'keydown' ];
 
 // Save current script URL
-KonamiCode.source = `${document.currentScript.src.split("/").slice(0,-1).join("/")}/`;
+KonaCode.source = `${document.currentScript.src.split("/").slice(0,-1).join("/")}/`;
