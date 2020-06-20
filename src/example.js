@@ -106,8 +106,8 @@ window.addEventListener( 'load', _ => {
 
                     }
                 }
-            ]
-
+            ],
+            feedback: true
         }
     );
 

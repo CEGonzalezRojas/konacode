@@ -17,8 +17,9 @@ class KonaCode{
         codes: [    // Array of Objects.
             {
                 sequence: [ KonaCode.keys.UP, KonaCode.keys.UP, ... ],    // Array with sequence. Allowed 'keys' values are in KonaCode.keys. You can also use the values ( "UP", "DOWN", … ). 3 keys minimun
-                then: _ => { ... }  // Function to be called when the sequence is complete,
-                skin: KonaCode.skins.SKIN // Skin for the joystick.
+                callback: _ => { ... }  // Function to call when the sequence is complete,
+                progress: (count,percent) => { ... }  // Function to call when the user is completing the sequence,
+                skin: KonaCode.skins.SNES // Skin for the joystick.
                 color: KonaCode.colors.COLOR  // Some skins have color variations
             },
             –
@@ -53,7 +54,7 @@ class KonaCode{
         this.keyboardEvent = 'keyup';
         
         this.joystickEnable = setup.joystickEnable !== undefined? setup.joystickEnable : true;
-        this.feedbackEnable = setup.feedback !== undefined? setup.feedback : true;
+        this.feedbackEnable = setup.feedback !== undefined? setup.feedback : false;
         
         if( this.feedbackEnable ){
             this.prepareFeedback();
